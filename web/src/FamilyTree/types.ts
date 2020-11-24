@@ -1,4 +1,4 @@
-export type PersonID = string
+export type PersonID = number
 export type RelationshipType = 'spouse' | 'parent' | 'child' | 'sibling'
 export type RelatedPeople = {
   id: number

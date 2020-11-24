@@ -1,5 +1,9 @@
 import React from 'react'
-import { onePairSpouse, onePerson } from '../__fixtures__/familyTree'
+import {
+  onePairSpouse,
+  onePerson,
+  onePairSpouseOneChild,
+} from '../__fixtures__/familyTree'
 import { PersonID, PersonSVGDimensions, RelatedPeople } from './types'
 
 function firstNLetters(s: string, n: number) {
@@ -7,6 +11,86 @@ function firstNLetters(s: string, n: number) {
     return s.substring(0, n) + '..'
   }
   return s
+}
+
+type familyChartDimensions = {
+  id: number
+  row: number
+  column: number
+}
+
+function getNextPersonColumn(
+  dimensions: familyChartDimensions[],
+  level: number
+) {
+  const columns = dimensions.filter((d) => d.row === level).map((d) => d.column)
+  if (columns.length === 0) return 0
+  return Math.max(...columns) + 1
+}
+
+export function familyTreeToChartDimensions(
+  family: Record<PersonID, RelatedPeople>
+): familyChartDimensions[] {
+  let dimensions: familyChartDimensions[] = []
+  let queue: { id: number; level: number }[] = []
+  let processedIds: number[] = []
+  const ids = Object.keys(family)
+
+  if (ids.length === 0) return dimensions
+
+  queue.push({ id: Number(ids[0]), level: 0 })
+
+  while (queue.length > 0) {
+    const { id, level } = queue.shift()!
+
+    if (processedIds.includes(id)) continue
+
+    const person = family[id]
+
+    dimensions.push({
+      id: person.id,
+      row: level,
+      column: getNextPersonColumn(dimensions, level),
+    })
+    processedIds.push(id)
+
+    // 1. spouses
+    const spouses = person.relations
+      .filter((r) => r.type === 'spouse')
+      .map((s) => ({ id: s.to, level }))
+
+    if (spouses.length > 0) {
+      queue.push(...spouses)
+    }
+
+    // 2. siblings
+    const siblings = person.relations
+      .filter((r) => r.type === 'sibling')
+      .map((s) => ({ id: s.to, level }))
+
+    if (spouses.length > 0) {
+      queue.push(...siblings)
+    }
+
+    // 3. parents
+    const parents = person.relations
+      .filter((r) => r.type === 'parent')
+      .map((s) => ({ id: s.to, level: level + 1 }))
+
+    if (parents.length > 0) {
+      queue.push(...parents)
+    }
+
+    // 4. children
+    const children = person.relations
+      .filter((r) => r.type === 'child')
+      .map((s) => ({ id: s.to, level: level - 1 }))
+
+    if (children.length > 0) {
+      queue.push(...children)
+    }
+  }
+  return dimensions
 }
 
 export function familyTreeToSVGDimensions(
@@ -18,8 +102,8 @@ export function familyTreeToSVGDimensions(
     adjacent: 200,
   }
 
-  return Object.keys(family).map((id, idx) => {
-    const person = family[id]
+  const firstPass = Object.keys(family).map((id, idx) => {
+    const person = family[Number(id)]
     return {
       id: person.id,
       name: person.name,
@@ -45,10 +129,12 @@ export function familyTreeToSVGDimensions(
       },
     }
   })
+
+  return firstPass
 }
 
 export function FamilyTree() {
-  const family = familyTreeToSVGDimensions(onePairSpouse)
+  const family = familyTreeToSVGDimensions(onePairSpouseOneChild)
   const lines = family.map((person) => person.svg.lines).flat()
   const circles = family.map((person) => person.svg.circle).flat()
   const texts = family.map((person) => person.svg.text).flat()
