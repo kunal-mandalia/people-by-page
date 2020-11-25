@@ -20,6 +20,8 @@ type familyChartDimensions = {
   column: number
 }
 
+const colors = ['#535b2d', '#494949', '#d7d7d7', '9ad4ce']
+
 function getNextPersonColumn(
   dimensions: familyChartDimensions[],
   level: number
@@ -94,98 +96,14 @@ export function familyTreeToChartDimensions(
   return dimensions
 }
 
-export function familyTreeToSVGDimensions(
-  family: Record<PersonID, RelatedPeople>
-): PersonSVGDimensions[] {
-  const OFFSET_X = 100
-  const OFFSET_Y = 100
-  const spacing = {
-    adjacent: 200,
-  }
-
-  const firstPass = Object.keys(family).map((id, idx) => {
-    const person = family[Number(id)]
-    return {
-      id: person.id,
-      name: person.name,
-      svg: {
-        circle: {
-          cx: OFFSET_X + idx * spacing.adjacent,
-          cy: OFFSET_Y,
-        },
-        text: {
-          x: OFFSET_X - 25 + idx * spacing.adjacent,
-          y: OFFSET_Y + 5,
-          value: firstNLetters(person.name, 6),
-        },
-        lines: [
-          // {
-          //   x1: 100,
-          //   x2: 300,
-          //   y1: 100,
-          //   y2: 100,
-          //   strokeWidth: '6',
-          // },
-        ],
-      },
-    }
-  })
-
-  return firstPass
-}
-
-// export function FamilyTree() {
-//   const family = familyTreeToSVGDimensions(onePairSpouseOneChild)
-//   const lines = family.map((person) => person.svg.lines).flat()
-//   const circles = family.map((person) => person.svg.circle).flat()
-//   const texts = family.map((person) => person.svg.text).flat()
-
-//   console.log('>>> lines', lines)
-//   console.log('>>> circles', circles)
-//   console.log('>>> texts', texts)
-//   return (
-//     <svg
-//       version="1.1"
-//       baseProfile="full"
-//       width="100vw"
-//       height="100vh"
-//       xmlns="http://www.w3.org/2000/svg"
-//     >
-//       <rect width="100%" height="100%" fill="#222222" />
-
-//       {lines.map((line, idx) => (
-//         <line
-//           key={`line-${idx}`}
-//           x1={line.x1}
-//           x2={line.x2}
-//           y1={line.y1}
-//           y2={line.y2}
-//           stroke="rgb(255 255 255 / 60%)"
-//           strokeWidth={line.strokeWidth}
-//         />
-//       ))}
-
-//       {circles.map((c, idx) => (
-//         <circle key={`circle-${idx}`} cx={c.cx} cy={c.cy} fill="green" r={60} />
-//       ))}
-
-//       {texts.map((t, idx) => (
-//         <text key={`text-${idx}`} x={t.x} y={t.y} fill="white">
-//           {t.value}
-//         </text>
-//       ))}
-//     </svg>
-//   )
-// }
+const offsetRowHeight = 200
+const offsetColumnWidth = 200
+const rowHeight = 250
+const columnWidth = 300
 
 function mapDimensionsToSVGCanvas(
   dims: familyChartDimensions[]
 ): familyChartDimensions[] {
-  const offsetRowHeight = 200
-  const offsetColumnWidth = 200
-  const rowHeight = 250
-  const columnWidth = 300
-
   const minCol = Math.min(...dims.map((d) => d.column))
   const minRow = Math.min(...dims.map((d) => d.row))
   const adjCol = -minCol
@@ -201,6 +119,76 @@ export function FamilyTree() {
   const dimensions = mapDimensionsToSVGCanvas(
     familyTreeToChartDimensions(twoPairSpouseThreeChildren)
   )
+  let processedSpouses: number[] = []
+  const spouseLines = dimensions
+    .map((d) => {
+      const p1 = twoPairSpouseThreeChildren[d.id]!
+      const spouses = p1.relations.filter(
+        (r) => r.type === 'spouse' && !processedSpouses.includes(r.to)
+      )
+      if (spouses.length === 0) return null
+
+      const lines = spouses.map((s, idx) => {
+        const p2 = dimensions.find((d) => d.id === s.to)!
+        // spouse have children together?
+        const childrenLines = p1.relations
+          .filter((r) => r.type === 'parent')
+          .map((c) => twoPairSpouseThreeChildren[c.to])
+          .filter((p) =>
+            p.relations.some((r) => r.to === p2.id && r.type === 'child')
+          )
+          .map((c) => {
+            const x = p2.column - columnWidth / 2
+            const y1 = d.row - idx * 20
+            const cd = dimensions.find((d) => d.id === c.id)!
+            const y2 = cd.row - 55
+            const xc = cd.column
+            const parentToChildLine = (
+              <line
+                y1={y1}
+                y2={y2}
+                x1={x}
+                x2={x}
+                stroke={colors[idx]}
+                strokeWidth="4px"
+              />
+            )
+            const adjacentChildLine = (
+              <line
+                y1={y2}
+                y2={y2}
+                x1={xc}
+                x2={x}
+                stroke={colors[idx]}
+                strokeWidth="4px"
+              />
+            )
+            return [parentToChildLine, adjacentChildLine]
+          })
+          .flat()
+
+        console.log('>>> childrenLines', childrenLines)
+        return (
+          <>
+            <line
+              y1={d.row - idx * 20}
+              y2={d.row - idx * 20}
+              x1={d.column}
+              x2={p2.column}
+              stroke={colors[idx]}
+              strokeWidth="8px"
+            />
+            {childrenLines}
+          </>
+        )
+      })
+      processedSpouses.push(d.id)
+      return lines
+    })
+    .filter(Boolean)
+    .flat()
+
+  console.log('>>> spouseLines', spouseLines)
   return (
     <div>
       <svg
@@ -211,14 +199,17 @@ export function FamilyTree() {
         xmlns="http://www.w3.org/2000/svg"
       >
         <rect width="100%" height="100%" fill="#222222" />
-        {dimensions.map((d) => (
-          <>
-            <circle cx={d.column} cy={d.row} fill="green" r={60} />
-            <text x={d.column - 20} y={d.row + 5} fill="white">
-              {firstNLetters(twoPairSpouseThreeChildren[d.id].name, 6)}
-            </text>
-          </>
-        ))}
+        {spouseLines}
+        {dimensions.map((d) => {
+          return (
+            <>
+              <circle cx={d.column} cy={d.row} fill="green" r={60} />
+              <text x={d.column - 25} y={d.row + 5} fill="white">
+                {firstNLetters(twoPairSpouseThreeChildren[d.id].name, 6)}
+              </text>
+            </>
+          )
+        })}
       </svg>
     </div>
   )

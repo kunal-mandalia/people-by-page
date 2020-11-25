@@ -34,7 +34,7 @@ export const onePairSpouse: Record<PersonID, RelatedPeople> = {
 export const onePairSpouseOneChild: Record<PersonID, RelatedPeople> = {
   1: {
     id: 1,
-    name: 'Fyodor Pavlovich Karamazov',
+    name: 'Adelaida Ivanovna Miusova',
     relations: [
       {
         to: 2,
@@ -48,7 +48,7 @@ export const onePairSpouseOneChild: Record<PersonID, RelatedPeople> = {
   },
   2: {
     id: 2,
-    name: 'Adelaida Ivanovna Miusova',
+    name: 'Fyodor Pavlovich Karamazov',
     relations: [
       {
         to: 1,
@@ -154,10 +154,24 @@ export const onePairSpouseTwoChildren: Record<PersonID, RelatedPeople> = {
 export const twoPairSpouseThreeChildren: Record<PersonID, RelatedPeople> = {
   1: {
     id: 1,
-    name: 'Fyodor Pavlovich Karamazov',
+    name: 'Adelaida Ivanovna Miusova',
     relations: [
       {
         to: 2,
+        type: 'spouse',
+      },
+      {
+        to: 3,
+        type: 'parent',
+      },
+    ],
+  },
+  2: {
+    id: 2,
+    name: 'Fyodor Pavlovich Karamazov',
+    relations: [
+      {
+        to: 1,
         type: 'spouse',
       },
       {
@@ -174,20 +188,6 @@ export const twoPairSpouseThreeChildren: Record<PersonID, RelatedPeople> = {
       },
       {
         to: 6,
-        type: 'parent',
-      },
-    ],
-  },
-  2: {
-    id: 2,
-    name: 'Adelaida Ivanovna Miusova',
-    relations: [
-      {
-        to: 1,
-        type: 'spouse',
-      },
-      {
-        to: 3,
         type: 'parent',
       },
     ],
@@ -211,7 +211,7 @@ export const twoPairSpouseThreeChildren: Record<PersonID, RelatedPeople> = {
     name: 'Sofya Ivanovna',
     relations: [
       {
-        to: 1,
+        to: 2,
         type: 'spouse',
       },
       {
@@ -229,7 +229,7 @@ export const twoPairSpouseThreeChildren: Record<PersonID, RelatedPeople> = {
     name: 'Ivan Karamazov',
     relations: [
       {
-        to: 1,
+        to: 2,
         type: 'child',
       },
       {
@@ -247,7 +247,7 @@ export const twoPairSpouseThreeChildren: Record<PersonID, RelatedPeople> = {
     name: 'Alexei Karamazov',
     relations: [
       {
-        to: 1,
+        to: 2,
         type: 'child',
       },
       {
