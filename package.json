@@ -1,0 +1,11 @@
+{
+  "name": "people-by-page",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:kunal-mandalia/people-by-page.git",
+  "author": "Kunal Mandalia <kunal.v.mandalia@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "web": "cd web && yarn start"
+  }
+}
