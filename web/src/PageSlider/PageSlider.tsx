@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import {
   Grid,
+  Hidden,
   makeStyles,
   Slider,
   Tooltip,
@@ -16,6 +17,9 @@ const useStyles = makeStyles((theme) => ({
   },
   slider: {
     color: 'white',
+  },
+  page: {
+    color: theme.palette.grey[200],
   },
 }))
 
@@ -48,21 +52,27 @@ export function PageSlider({ firstPage, lastPage }: Props) {
 
   return (
     <div className={classes.root}>
-      <Grid md={2}></Grid>
-      <Grid md={8}>
-        <Typography variant="overline">Page {page}</Typography>
-        <Slider
-          min={1}
-          max={lastPage}
-          step={1}
-          color="primary"
-          value={page}
-          onChange={handleChange}
-          classes={{
-            colorPrimary: classes.slider,
-          }}
-          ValueLabelComponent={ValueLabelComponent}
-        />
+      <Grid container>
+        <Hidden xsDown>
+          <Grid item md={2}></Grid>
+        </Hidden>
+        <Grid item xs={12} md={8}>
+          <Slider
+            min={1}
+            max={lastPage}
+            step={1}
+            color="primary"
+            value={page}
+            onChange={handleChange}
+            classes={{
+              colorPrimary: classes.slider,
+            }}
+            ValueLabelComponent={ValueLabelComponent}
+          />
+          <Typography variant="caption" classes={{ root: classes.page }}>
+            Page {page}
+          </Typography>
+        </Grid>
       </Grid>
     </div>
   )
