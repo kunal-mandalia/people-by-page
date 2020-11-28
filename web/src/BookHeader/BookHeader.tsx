@@ -3,7 +3,7 @@ import React from 'react'
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    padding: '40px 15px 20px',
+    padding: '80px 15px 20px',
     backgroundColor: theme.palette.grey[900],
   },
   title: {
