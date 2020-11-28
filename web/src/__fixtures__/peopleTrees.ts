@@ -1,6 +1,6 @@
-import { PersonID, RelatedPeople } from '../FamilyTree/types'
+import { PeopleTree, PersonID, RelatedPeople } from '../types'
 
-export const onePerson: Record<PersonID, RelatedPeople> = {
+export const onePerson: PeopleTree = {
   1: {
     id: 1,
     name: 'Fyodor Pavlovich Karamazov',
@@ -8,14 +8,14 @@ export const onePerson: Record<PersonID, RelatedPeople> = {
   },
 }
 
-export const onePairSpouse: Record<PersonID, RelatedPeople> = {
+export const onePairPartner: PeopleTree = {
   1: {
     id: 1,
     name: 'Fyodor Pavlovich Karamazov',
     relations: [
       {
         to: 2,
-        type: 'spouse',
+        type: 'partner',
       },
     ],
   },
@@ -25,20 +25,20 @@ export const onePairSpouse: Record<PersonID, RelatedPeople> = {
     relations: [
       {
         to: 1,
-        type: 'spouse',
+        type: 'partner',
       },
     ],
   },
 }
 
-export const onePairSpouseOneChild: Record<PersonID, RelatedPeople> = {
+export const onePairPartnerOneChild: PeopleTree = {
   1: {
     id: 1,
     name: 'Adelaida Ivanovna Miusova',
     relations: [
       {
         to: 2,
-        type: 'spouse',
+        type: 'partner',
       },
       {
         to: 3,
@@ -52,7 +52,7 @@ export const onePairSpouseOneChild: Record<PersonID, RelatedPeople> = {
     relations: [
       {
         to: 1,
-        type: 'spouse',
+        type: 'partner',
       },
       {
         to: 3,
@@ -76,14 +76,14 @@ export const onePairSpouseOneChild: Record<PersonID, RelatedPeople> = {
   },
 }
 
-export const onePairSpouseTwoChildren: Record<PersonID, RelatedPeople> = {
+export const onePairPartnerTwoChildren: PeopleTree = {
   1: {
     id: 1,
     name: 'Fyodor Pavlovich Karamazov',
     relations: [
       {
         to: 4,
-        type: 'spouse',
+        type: 'partner',
       },
       {
         to: 5,
@@ -101,7 +101,7 @@ export const onePairSpouseTwoChildren: Record<PersonID, RelatedPeople> = {
     relations: [
       {
         to: 1,
-        type: 'spouse',
+        type: 'partner',
       },
       {
         to: 5,
@@ -151,14 +151,14 @@ export const onePairSpouseTwoChildren: Record<PersonID, RelatedPeople> = {
   },
 }
 
-export const twoPairSpouseThreeChildren: Record<PersonID, RelatedPeople> = {
+export const twoPairPartnerThreeChildren: PeopleTree = {
   1: {
     id: 1,
     name: 'Adelaida Ivanovna Miusova',
     relations: [
       {
         to: 2,
-        type: 'spouse',
+        type: 'partner',
       },
       {
         to: 3,
@@ -172,11 +172,11 @@ export const twoPairSpouseThreeChildren: Record<PersonID, RelatedPeople> = {
     relations: [
       {
         to: 1,
-        type: 'spouse',
+        type: 'partner',
       },
       {
         to: 4,
-        type: 'spouse',
+        type: 'partner',
       },
       {
         to: 3,
@@ -212,7 +212,7 @@ export const twoPairSpouseThreeChildren: Record<PersonID, RelatedPeople> = {
     relations: [
       {
         to: 2,
-        type: 'spouse',
+        type: 'partner',
       },
       {
         to: 5,
@@ -262,7 +262,7 @@ export const twoPairSpouseThreeChildren: Record<PersonID, RelatedPeople> = {
   },
 }
 
-export const twoPairSpouseThreeChildrenOneNonFamily: Record<
+export const twoPairPartnerThreeChildrenOneNonFamily: Record<
   PersonID,
   RelatedPeople
 > = {
@@ -272,7 +272,7 @@ export const twoPairSpouseThreeChildrenOneNonFamily: Record<
     relations: [
       {
         to: 2,
-        type: 'spouse',
+        type: 'partner',
       },
       {
         to: 3,
@@ -286,11 +286,11 @@ export const twoPairSpouseThreeChildrenOneNonFamily: Record<
     relations: [
       {
         to: 1,
-        type: 'spouse',
+        type: 'partner',
       },
       {
         to: 4,
-        type: 'spouse',
+        type: 'partner',
       },
       {
         to: 3,
@@ -326,7 +326,7 @@ export const twoPairSpouseThreeChildrenOneNonFamily: Record<
     relations: [
       {
         to: 2,
-        type: 'spouse',
+        type: 'partner',
       },
       {
         to: 5,

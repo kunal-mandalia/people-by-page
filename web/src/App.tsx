@@ -1,8 +1,9 @@
 import React from 'react'
 import './App.css'
 import { BookHeader } from './BookHeader/BookHeader'
-import { FamilyTree } from './FamilyTree/FamilyTree'
+import { CharacterGraph } from './CharacterGraph/CharacterGraph'
 import { PageSlider } from './PageSlider/PageSlider'
+import { twoPairPartnerThreeChildrenOneNonFamily as peopleTree } from './__fixtures__/peopleTrees'
 
 function App() {
   return (
@@ -13,7 +14,7 @@ function App() {
           author="Fyodor Dostoyevsky"
         />
         <PageSlider firstPage={17} lastPage={985} onPageChange={() => {}} />
-        <FamilyTree />
+        <CharacterGraph peopleTree={peopleTree} />
       </header>
     </div>
   )

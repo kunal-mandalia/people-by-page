@@ -1,13 +1,13 @@
 import {
-  onePairSpouse,
-  onePairSpouseOneChild,
-  onePairSpouseTwoChildren,
+  onePairPartner,
+  onePairPartnerOneChild,
+  onePairPartnerTwoChildren,
   onePerson,
-  twoPairSpouseThreeChildren,
-} from '../__fixtures__/familyTree'
-import { familyTreeToChartDimensions } from './FamilyTree'
+  twoPairPartnerThreeChildren,
+} from '../__fixtures__/peopleTrees'
+import { peopleTreeToChartDimensions } from './CharacterGraph'
 
-test('familyTreeToChartDimensions returns correct dimensions given onePerson', () => {
+test('peopleTreeToChartDimensions returns correct dimensions given onePerson', () => {
   // arrange
   const expected = [
     {
@@ -18,13 +18,13 @@ test('familyTreeToChartDimensions returns correct dimensions given onePerson', (
   ]
 
   // act
-  const actual = familyTreeToChartDimensions(onePerson)
+  const actual = peopleTreeToChartDimensions(onePerson)
 
   // assert
   expect(actual).toMatchObject(expected)
 })
 
-test('familyTreeToChartDimensions returns correct dimensions given onePairSpouse', () => {
+test('peopleTreeToChartDimensions returns correct dimensions given onePairPartner', () => {
   // arrange
   const expected = [
     {
@@ -40,13 +40,13 @@ test('familyTreeToChartDimensions returns correct dimensions given onePairSpouse
   ]
 
   // act
-  const actual = familyTreeToChartDimensions(onePairSpouse)
+  const actual = peopleTreeToChartDimensions(onePairPartner)
 
   // assert
   expect(actual).toMatchObject(expected)
 })
 
-test('familyTreeToChartDimensions returns correct dimensions given onePairSpouseOneChild', () => {
+test('peopleTreeToChartDimensions returns correct dimensions given onePairPartnerOneChild', () => {
   // arrange
   const expected = [
     {
@@ -67,13 +67,13 @@ test('familyTreeToChartDimensions returns correct dimensions given onePairSpouse
   ]
 
   // act
-  const actual = familyTreeToChartDimensions(onePairSpouseOneChild)
+  const actual = peopleTreeToChartDimensions(onePairPartnerOneChild)
 
   // assert
   expect(actual).toMatchObject(expected)
 })
 
-test('familyTreeToChartDimensions returns correct dimensions given onePairSpouseTwoChildren', () => {
+test('peopleTreeToChartDimensions returns correct dimensions given onePairPartnerTwoChildren', () => {
   // arrange
   const expected = [
     {
@@ -99,13 +99,13 @@ test('familyTreeToChartDimensions returns correct dimensions given onePairSpouse
   ]
 
   // act
-  const actual = familyTreeToChartDimensions(onePairSpouseTwoChildren)
+  const actual = peopleTreeToChartDimensions(onePairPartnerTwoChildren)
 
   // assert
   expect(actual).toMatchObject(expected)
 })
 
-test('familyTreeToChartDimensions returns correct dimensions given twoPairSpouseThreeChildren', () => {
+test('peopleTreeToChartDimensions returns correct dimensions given twoPairPartnerThreeChildren', () => {
   // arrange
   const expected = [
     {
@@ -141,7 +141,7 @@ test('familyTreeToChartDimensions returns correct dimensions given twoPairSpouse
   ]
 
   // act
-  const actual = familyTreeToChartDimensions(twoPairSpouseThreeChildren)
+  const actual = peopleTreeToChartDimensions(twoPairPartnerThreeChildren)
 
   // assert
   expect(actual).toMatchObject(expected)
