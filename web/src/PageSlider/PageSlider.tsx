@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import {
   Grid,
+  Hidden,
   makeStyles,
   Slider,
   Tooltip,
@@ -52,8 +53,10 @@ export function PageSlider({ firstPage, lastPage }: Props) {
   return (
     <div className={classes.root}>
       <Grid container>
-        <Grid item md={2}></Grid>
-        <Grid item md={8}>
+        <Hidden xsDown>
+          <Grid item md={2}></Grid>
+        </Hidden>
+        <Grid item xs={12} md={8}>
           <Slider
             min={1}
             max={lastPage}
