@@ -12,7 +12,7 @@ function App() {
           title="The Brothers Karamazov"
           author="Fyodor Dostoyevsky"
         />
-        <PageSlider firstPage={17} lastPage={985} />
+        <PageSlider firstPage={17} lastPage={985} onPageChange={() => {}} />
         <FamilyTree />
       </header>
     </div>

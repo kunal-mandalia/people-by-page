@@ -26,6 +26,7 @@ const useStyles = makeStyles((theme) => ({
 interface Props {
   firstPage: number
   lastPage: number
+  onPageChange: Function
 }
 
 function ValueLabelComponent(props: { children: any; open: any; value: any }) {
@@ -38,16 +39,14 @@ function ValueLabelComponent(props: { children: any; open: any; value: any }) {
   )
 }
 
-export function PageSlider({ firstPage, lastPage }: Props) {
+export function PageSlider({ firstPage, lastPage, onPageChange }: Props) {
   const classes = useStyles()
   const [page, setPage] = useState(firstPage)
 
   const handleChange = (_: any, value: number | number[]) => {
-    if (Array.isArray(value)) {
-      setPage(value[0])
-    } else {
-      setPage(value)
-    }
+    const nextPage = Array.isArray(value) ? value[0] : value
+    setPage(nextPage)
+    onPageChange(nextPage)
   }
 
   return (
