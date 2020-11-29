@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import {
   Button,
   Grid,
@@ -57,16 +57,20 @@ export function PageSlider({
   const [isPlaying, setIsPlaying] = useState(false)
   const [playCounter, setPlayCounter] = useState(0)
 
-  const handleChange = (_: any, value: number | number[]) => {
-    const nextPage = Array.isArray(value) ? value[0] : value
-    if (nextPage <= read) {
-      onPageChange(nextPage)
-    }
-  }
+  const handleChange = useCallback(
+    (_: any, value: number | number[]) => {
+      const nextPage = Array.isArray(value) ? value[0] : value
+      if (nextPage <= read) {
+        onPageChange(nextPage)
+      }
+    },
+    [read, onPageChange]
+  )
 
   const handlePlayStopClick = () => {
     if (page === read) {
       handleChange(null, firstPage)
+      setPlayCounter(0)
     } else {
       setIsPlaying(!isPlaying)
     }
@@ -83,7 +87,7 @@ export function PageSlider({
         }, MS_PER_PAGE)
       }
     }
-  }, [playCounter, isPlaying])
+  }, [playCounter, isPlaying, handleChange, setPlayCounter, page, read])
 
   return (
     <div className={classes.root}>
