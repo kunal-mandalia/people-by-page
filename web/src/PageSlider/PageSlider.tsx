@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
+  Button,
   Grid,
   Hidden,
   makeStyles,
@@ -7,6 +8,8 @@ import {
   Tooltip,
   Typography,
 } from '@material-ui/core'
+
+const MS_PER_PAGE = 1000
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -19,6 +22,9 @@ const useStyles = makeStyles((theme) => ({
   },
   page: {
     color: theme.palette.grey[200],
+  },
+  playPauseButton: {
+    margin: '0 8px',
   },
 }))
 
@@ -48,6 +54,8 @@ export function PageSlider({
   onPageChange,
 }: Props) {
   const classes = useStyles()
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [playCounter, setPlayCounter] = useState(0)
 
   const handleChange = (_: any, value: number | number[]) => {
     const nextPage = Array.isArray(value) ? value[0] : value
@@ -55,6 +63,27 @@ export function PageSlider({
       onPageChange(nextPage)
     }
   }
+
+  const handlePlayStopClick = () => {
+    if (page === read) {
+      handleChange(null, firstPage)
+    } else {
+      setIsPlaying(!isPlaying)
+    }
+  }
+
+  useEffect(() => {
+    if (isPlaying) {
+      if (page === read) {
+        setIsPlaying(false)
+      } else {
+        setTimeout(() => {
+          handleChange(null, page + 1)
+          setPlayCounter(playCounter + 1)
+        }, MS_PER_PAGE)
+      }
+    }
+  }, [playCounter, isPlaying])
 
   return (
     <div className={classes.root}>
@@ -75,9 +104,20 @@ export function PageSlider({
             }}
             ValueLabelComponent={ValueLabelComponent}
           />
-          <Typography variant="caption" classes={{ root: classes.page }}>
-            Page {page}
-          </Typography>
+          <span>
+            <Typography variant="caption" classes={{ root: classes.page }}>
+              Page {page}
+            </Typography>
+            <Button
+              size="small"
+              color="secondary"
+              variant="outlined"
+              className={classes.playPauseButton}
+              onClick={handlePlayStopClick}
+            >
+              {read === page ? 'Reset' : isPlaying ? 'Pause' : 'Play'}
+            </Button>
+          </span>
         </Grid>
       </Grid>
     </div>
