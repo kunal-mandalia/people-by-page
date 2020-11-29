@@ -7,6 +7,7 @@ export const book_9780140449242: Book = {
   pages: {
     start: 15,
     total: 985,
+    read: 19,
   },
   peopleByPage: {
     1: {

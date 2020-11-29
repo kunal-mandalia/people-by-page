@@ -26,6 +26,7 @@ interface Props {
   firstPage: number
   lastPage: number
   page: number
+  read: number
   onPageChange: Function
 }
 
@@ -39,12 +40,20 @@ function ValueLabelComponent(props: { children: any; open: any; value: any }) {
   )
 }
 
-export function PageSlider({ firstPage, lastPage, page, onPageChange }: Props) {
+export function PageSlider({
+  firstPage,
+  lastPage,
+  page,
+  read,
+  onPageChange,
+}: Props) {
   const classes = useStyles()
 
   const handleChange = (_: any, value: number | number[]) => {
     const nextPage = Array.isArray(value) ? value[0] : value
-    onPageChange(nextPage)
+    if (nextPage <= read) {
+      onPageChange(nextPage)
+    }
   }
 
   return (

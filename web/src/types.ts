@@ -42,6 +42,7 @@ export type Book = {
   pages: {
     start: number
     total: number
+    read: number
   }
   peopleByPage: PeopleTree
 }

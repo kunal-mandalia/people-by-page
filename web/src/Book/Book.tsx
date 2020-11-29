@@ -77,6 +77,7 @@ export function Book() {
       <PageSlider
         firstPage={book.pages.start}
         lastPage={book.pages.total}
+        read={book.pages.read}
         page={page}
         onPageChange={handlePageChange}
       />
