@@ -6,6 +6,7 @@ const SIZE_OFFSET_ROW_HEIGHT = 200
 const SIZE_OFFSET_COLUMN_WIDTH = 200
 const SIZE_ROW_HEIGHT = 250
 const SIZE_COLUMN_WIDTH = 300
+const SIZE_OFFSET_SIBLING_HEIGHT = 30
 
 function getNextPersonColumn(dimensions: PeopleSVGDimensions[], level: number) {
   const columns = dimensions.filter((d) => d.row === level).map((d) => d.column)
@@ -109,6 +110,69 @@ export function CharacterGraph({ peopleTree }: Props) {
     peopleTreeToChartDimensions(peopleTree)
   )
   let processedSpouses: number[] = []
+
+  const singleParents = dimensions
+    .map((d) => {
+      const p1 = peopleTree[d.id]!
+      const children = p1.relations
+        .filter((r) => r.type === 'parent')
+        .map((r) => peopleTree[r.to])
+        .filter((c) => {
+          const parents = c.relations.filter((r) => r.type === 'child')
+          return parents.length === 1
+        })
+      return children
+    })
+    .filter((children) => children.length > 0)
+
+  const singleParentLines = singleParents
+    .map((children) => {
+      const childrenDimensions = children.map((p) => {
+        return dimensions.find((d) => d.id === p.id)!
+      })
+      const xMin = childrenDimensions.reduce((x, cur) => {
+        if (cur.column < x) return cur.column
+        return x
+      }, Infinity)
+      const xMax = childrenDimensions.reduce((x, cur) => {
+        if (cur.column > x) return cur.column
+        return x
+      }, 0)
+      const y = childrenDimensions[0].row
+      const parentId = children[0].relations.find((r) => r.type === 'child')
+        ?.to!
+      const parentDimensions = dimensions.find((d) => d.id === parentId)!
+
+      const parentToChildLine = (
+        <line
+          key={`single-parent-child-${JSON.stringify(
+            childrenDimensions.map((cd) => cd.id)
+          )}`}
+          y1={parentDimensions.row}
+          y2={y}
+          x1={parentDimensions.column}
+          x2={parentDimensions.column}
+          stroke={colors[0]}
+          strokeWidth="4px"
+        />
+      )
+      const adjacentChildLine = (
+        <line
+          key={`adjacent-child-${JSON.stringify(
+            childrenDimensions.map((cd) => cd.id)
+          )}`}
+          y1={y - SIZE_OFFSET_SIBLING_HEIGHT}
+          y2={y - SIZE_OFFSET_SIBLING_HEIGHT}
+          x1={xMin}
+          x2={xMax}
+          stroke={colors[0]}
+          strokeWidth="4px"
+        />
+      )
+      return [parentToChildLine, adjacentChildLine]
+    })
+    .flat()
+
   const partnerLines = dimensions
     .map((d) => {
       const p1 = peopleTree[d.id]!
@@ -131,7 +195,7 @@ export function CharacterGraph({ peopleTree }: Props) {
             const x = p2.column - SIZE_COLUMN_WIDTH / 2
             const y1 = d.row - idx * 20
             const cd = dimensions.find((d) => d.id === c.id)!
-            const y2 = cd.row - 58
+            const y2 = cd.row - SIZE_OFFSET_SIBLING_HEIGHT
             const xc = cd.column
             const parentToChildLine = (
               <line
@@ -162,12 +226,12 @@ export function CharacterGraph({ peopleTree }: Props) {
         return (
           <Fragment key={`partner-line-${d.id}`}>
             <line
-              y1={d.row - idx * 20}
-              y2={d.row - idx * 20}
+              y1={d.row}
+              y2={d.row}
               x1={d.column}
               x2={p2.column}
               stroke={colors[idx]}
-              strokeWidth="8px"
+              strokeWidth="10px"
             />
             {childrenLines}
           </Fragment>
@@ -189,6 +253,7 @@ export function CharacterGraph({ peopleTree }: Props) {
         xmlns="http://www.w3.org/2000/svg"
       >
         <rect width="100%" height="100%" fill="#222222" />
+        {singleParentLines}
         {partnerLines}
         {dimensions.map((d) => {
           return (

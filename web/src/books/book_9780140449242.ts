@@ -12,17 +12,17 @@ export const book_9780140449242: Book = {
     1: {
       id: 1,
       name: 'Adelaida Ivanovna Miusova',
-      page: 15,
+      page: 16,
       relations: [
         {
           to: 2,
           type: 'partner',
-          page: 15,
+          page: 16,
         },
         {
           to: 3,
           type: 'parent',
-          page: 15,
+          page: 16,
         },
       ],
     },
@@ -34,12 +34,12 @@ export const book_9780140449242: Book = {
         {
           to: 1,
           type: 'partner',
-          page: 15,
+          page: 16,
         },
         {
           to: 4,
           type: 'partner',
-          page: 15,
+          page: 22,
         },
         {
           to: 3,
@@ -66,7 +66,7 @@ export const book_9780140449242: Book = {
         {
           to: 1,
           type: 'child',
-          page: 15,
+          page: 16,
         },
         {
           to: 2,
@@ -78,22 +78,22 @@ export const book_9780140449242: Book = {
     4: {
       id: 4,
       name: 'Sofya Ivanovna',
-      page: 15,
+      page: 22,
       relations: [
         {
           to: 2,
           type: 'partner',
-          page: 15,
+          page: 22,
         },
         {
           to: 5,
           type: 'parent',
-          page: 15,
+          page: 22,
         },
         {
           to: 6,
           type: 'parent',
-          page: 15,
+          page: 22,
         },
       ],
     },
@@ -110,7 +110,7 @@ export const book_9780140449242: Book = {
         {
           to: 4,
           type: 'child',
-          page: 15,
+          page: 22,
         },
         {
           to: 6,
@@ -132,7 +132,7 @@ export const book_9780140449242: Book = {
         {
           to: 4,
           type: 'child',
-          page: 15,
+          page: 22,
         },
         {
           to: 5,
@@ -140,12 +140,6 @@ export const book_9780140449242: Book = {
           page: 15,
         },
       ],
-    },
-    7: {
-      id: 7,
-      name: 'Father Zosima',
-      page: 30,
-      relations: [],
     },
   },
 }
