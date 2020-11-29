@@ -13,7 +13,6 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     padding: '15px 40px',
     color: theme.palette.grey[100],
-    backgroundColor: theme.palette.grey[900],
   },
   slider: {
     color: 'white',
@@ -26,6 +25,7 @@ const useStyles = makeStyles((theme) => ({
 interface Props {
   firstPage: number
   lastPage: number
+  page: number
   onPageChange: Function
 }
 
@@ -39,13 +39,11 @@ function ValueLabelComponent(props: { children: any; open: any; value: any }) {
   )
 }
 
-export function PageSlider({ firstPage, lastPage, onPageChange }: Props) {
+export function PageSlider({ firstPage, lastPage, page, onPageChange }: Props) {
   const classes = useStyles()
-  const [page, setPage] = useState(firstPage)
 
   const handleChange = (_: any, value: number | number[]) => {
     const nextPage = Array.isArray(value) ? value[0] : value
-    setPage(nextPage)
     onPageChange(nextPage)
   }
 
@@ -57,7 +55,7 @@ export function PageSlider({ firstPage, lastPage, onPageChange }: Props) {
         </Hidden>
         <Grid item xs={12} md={8}>
           <Slider
-            min={1}
+            min={firstPage}
             max={lastPage}
             step={1}
             color="primary"

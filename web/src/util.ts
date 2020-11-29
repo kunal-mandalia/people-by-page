@@ -5,4 +5,4 @@ export function firstNLetters(s: string, n: number) {
   return s
 }
 
-export const colors = ['#535b2d', '#494949', '#d7d7d7', '9ad4ce']
+export const colors = ['#880e4f', '#535b2d', '#494949', '#d7d7d7', '9ad4ce']

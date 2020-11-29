@@ -1,11 +1,13 @@
-export type PersonID = number
+export type BookId = number
+export type PersonId = number
 export type RelationshipType = 'partner' | 'parent' | 'child' | 'sibling'
 export type RelatedPeople = {
   id: number
   name: string
-  relations: { to: number; type: RelationshipType }[]
+  page: number
+  relations: { to: number; type: RelationshipType; page: number }[]
 }
-export type PeopleTree = Record<PersonID, RelatedPeople>
+export type PeopleTree = Record<PersonId, RelatedPeople>
 export type PersonSVGDimensions = {
   id: number
   name: string
@@ -32,4 +34,14 @@ export type PeopleSVGDimensions = {
   id: number
   row: number
   column: number
+}
+export type Book = {
+  ISBN: string
+  name: string
+  author: string
+  pages: {
+    start: number
+    total: number
+  }
+  peopleByPage: PeopleTree
 }

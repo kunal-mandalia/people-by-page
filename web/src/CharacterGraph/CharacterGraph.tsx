@@ -119,7 +119,8 @@ export function CharacterGraph({ peopleTree }: Props) {
 
       const lines = partners.map((s, idx) => {
         const p2 = dimensions.find((d) => d.id === s.to)!
-        // partner have children together?
+
+        // partners have children together
         const childrenLines = p1.relations
           .filter((r) => r.type === 'parent')
           .map((c) => peopleTree[c.to])
@@ -130,7 +131,7 @@ export function CharacterGraph({ peopleTree }: Props) {
             const x = p2.column - SIZE_COLUMN_WIDTH / 2
             const y1 = d.row - idx * 20
             const cd = dimensions.find((d) => d.id === c.id)!
-            const y2 = cd.row - 55
+            const y2 = cd.row - 58
             const xc = cd.column
             const parentToChildLine = (
               <line
@@ -192,7 +193,7 @@ export function CharacterGraph({ peopleTree }: Props) {
         {dimensions.map((d) => {
           return (
             <Fragment key={`person-${d.id}`}>
-              <circle cx={d.column} cy={d.row} fill="green" r={60} />
+              <circle cx={d.column} cy={d.row} fill="#880e4f" r={60} />
               <text x={d.column - 25} y={d.row + 5} fill="white">
                 {firstNLetters(peopleTree[d.id].name, 6)}
               </text>

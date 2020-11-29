@@ -4,7 +4,6 @@ import React from 'react'
 const useStyles = makeStyles((theme) => ({
   root: {
     padding: '80px 15px 20px',
-    backgroundColor: theme.palette.grey[900],
   },
   title: {
     color: theme.palette.grey[300],
