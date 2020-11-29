@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react'
 import { colors, firstNLetters } from '../util'
 import { PeopleSVGDimensions, PeopleTree } from '../types'
+import Tooltip from '@material-ui/core/Tooltip'
 
 const SIZE_OFFSET_ROW_HEIGHT = 200
 const SIZE_OFFSET_COLUMN_WIDTH = 200
@@ -259,9 +260,11 @@ export function CharacterGraph({ peopleTree }: Props) {
           return (
             <Fragment key={`person-${d.id}`}>
               <circle cx={d.column} cy={d.row} fill="#880e4f" r={60} />
-              <text x={d.column - 25} y={d.row + 5} fill="white">
-                {firstNLetters(peopleTree[d.id].name, 6)}
-              </text>
+              <Tooltip title={peopleTree[d.id].name}>
+                <text x={d.column - 25} y={d.row + 5} fill="white">
+                  {firstNLetters(peopleTree[d.id].name, 6)}
+                </text>
+              </Tooltip>
             </Fragment>
           )
         })}
