@@ -7,7 +7,7 @@ const SIZE_OFFSET_ROW_HEIGHT = 200
 const SIZE_OFFSET_COLUMN_WIDTH = 200
 const SIZE_ROW_HEIGHT = 250
 const SIZE_COLUMN_WIDTH = 300
-const SIZE_OFFSET_SIBLING_HEIGHT = 30
+const SIZE_OFFSET_SIBLING_HEIGHT = 80
 
 function getNextPersonColumn(dimensions: PeopleSVGDimensions[], level: number) {
   const columns = dimensions.filter((d) => d.row === level).map((d) => d.column)
@@ -170,7 +170,18 @@ export function CharacterGraph({ peopleTree }: Props) {
           strokeWidth="4px"
         />
       )
-      return [parentToChildLine, adjacentChildLine]
+      const childToParent = childrenDimensions.map((cd) => (
+        <line
+          key={`child-to-parent-${cd.id}`}
+          y1={cd.row - SIZE_OFFSET_SIBLING_HEIGHT}
+          y2={cd.row}
+          x1={cd.column}
+          x2={cd.column}
+          stroke={colors[0]}
+          strokeWidth="4px"
+        />
+      ))
+      return [...childToParent, parentToChildLine, adjacentChildLine]
     })
     .flat()
 
@@ -220,7 +231,18 @@ export function CharacterGraph({ peopleTree }: Props) {
                 strokeWidth="4px"
               />
             )
-            return [parentToChildLine, adjacentChildLine]
+            const childToParent = (
+              <line
+                key={`child-to-parent-${cd.id}`}
+                y1={cd.row - SIZE_OFFSET_SIBLING_HEIGHT}
+                y2={cd.row}
+                x1={cd.column}
+                x2={cd.column}
+                stroke={colors[0]}
+                strokeWidth="4px"
+              />
+            )
+            return [childToParent, parentToChildLine, adjacentChildLine]
           })
           .flat()
 
