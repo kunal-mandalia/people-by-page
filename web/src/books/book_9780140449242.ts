@@ -7,7 +7,7 @@ export const book_9780140449242: Book = {
   pages: {
     start: 15,
     total: 985,
-    read: 22,
+    read: 25,
   },
   peopleByPage: {
     1: {
@@ -96,6 +96,11 @@ export const book_9780140449242: Book = {
           type: 'parent',
           page: 22,
         },
+        {
+          to: 8,
+          type: 'child',
+          page: 22,
+        },
       ],
     },
     5: {
@@ -141,6 +146,30 @@ export const book_9780140449242: Book = {
           page: 15,
         },
       ],
+    },
+    7: {
+      id: 7,
+      name: 'Grigory',
+      page: 19,
+      relations: [],
+    },
+    8: {
+      id: 8,
+      name: 'Widow of General Vorokhov',
+      page: 19,
+      relations: [
+        {
+          to: 4,
+          type: 'parent',
+          page: 22,
+        },
+      ],
+    },
+    9: {
+      id: 9,
+      name: 'Yefim Petrovich Polyonov',
+      page: 25,
+      relations: [],
     },
   },
 }

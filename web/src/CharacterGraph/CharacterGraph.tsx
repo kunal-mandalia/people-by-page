@@ -3,11 +3,11 @@ import { colors, firstNLetters } from '../util'
 import { PeopleSVGDimensions, PeopleTree } from '../types'
 import Tooltip from '@material-ui/core/Tooltip'
 
-const SIZE_OFFSET_ROW_HEIGHT = 200
+const SIZE_OFFSET_ROW_HEIGHT = 100
 const SIZE_OFFSET_COLUMN_WIDTH = 200
 const SIZE_ROW_HEIGHT = 250
 const SIZE_COLUMN_WIDTH = 300
-const SIZE_OFFSET_SIBLING_HEIGHT = 80
+const SIZE_OFFSET_SIBLING_HEIGHT = 125
 
 function getNextPersonColumn(dimensions: PeopleSVGDimensions[], level: number) {
   const columns = dimensions.filter((d) => d.row === level).map((d) => d.column)
@@ -128,21 +128,25 @@ export function CharacterGraph({ peopleTree }: Props) {
 
   const singleParentLines = singleParents
     .map((children) => {
+      const parentId = children[0].relations.find((r) => r.type === 'child')
+        ?.to!
+      const parentDimensions = dimensions.find((d) => d.id === parentId)!
+
       const childrenDimensions = children.map((p) => {
         return dimensions.find((d) => d.id === p.id)!
       })
-      const xMin = childrenDimensions.reduce((x, cur) => {
-        if (cur.column < x) return cur.column
-        return x
-      }, Infinity)
+      const xMin =
+        childrenDimensions.length === 1
+          ? parentDimensions.column
+          : childrenDimensions.reduce((x, cur) => {
+              if (cur.column < x) return cur.column
+              return x
+            }, Infinity)
       const xMax = childrenDimensions.reduce((x, cur) => {
         if (cur.column > x) return cur.column
         return x
       }, 0)
       const y = childrenDimensions[0].row
-      const parentId = children[0].relations.find((r) => r.type === 'child')
-        ?.to!
-      const parentDimensions = dimensions.find((d) => d.id === parentId)!
 
       const parentToChildLine = (
         <line
@@ -150,7 +154,7 @@ export function CharacterGraph({ peopleTree }: Props) {
             childrenDimensions.map((cd) => cd.id)
           )}`}
           y1={parentDimensions.row}
-          y2={y}
+          y2={y - SIZE_OFFSET_SIBLING_HEIGHT}
           x1={parentDimensions.column}
           x2={parentDimensions.column}
           stroke={colors[0]}
