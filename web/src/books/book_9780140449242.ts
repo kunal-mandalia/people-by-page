@@ -156,7 +156,7 @@ export const book_9780140449242: Book = {
     8: {
       id: 8,
       name: 'Widow of General Vorokhov',
-      page: 19,
+      page: 22,
       relations: [
         {
           to: 4,
