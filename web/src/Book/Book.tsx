@@ -19,7 +19,7 @@ export function Book() {
 
   useEffect(() => {
     if (book) {
-      setPage(book.pages.start)
+      setPage(25)
 
       const peopleTree = book.peopleByPage
       const peopleByCurrentPage = Object.keys(book.peopleByPage).reduce(

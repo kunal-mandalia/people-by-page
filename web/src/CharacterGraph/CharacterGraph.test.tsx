@@ -4,8 +4,9 @@ import {
   onePairPartnerTwoChildren,
   onePerson,
   twoPairPartnerThreeChildren,
+  twoPairPartnerThreeChildrenOneNonFamily,
 } from '../__fixtures__/peopleTrees'
-import { peopleTreeToChartDimensions } from './CharacterGraph'
+import { peopleTreeToChartDimensions, getDistance } from './CharacterGraph'
 
 test('peopleTreeToChartDimensions returns correct dimensions given onePerson', () => {
   // arrange
@@ -145,4 +146,24 @@ test('peopleTreeToChartDimensions returns correct dimensions given twoPairPartne
 
   // assert
   expect(actual).toMatchObject(expected)
+})
+
+test('getDistance: returns the distance between person and relations', () => {
+  // arrange
+  const dimensionRange = [
+    { id: 1, row: 0, column: 1 },
+    { id: 1, row: 0, column: 2 },
+    { id: 1, row: 0, column: 3 },
+    { id: 1, row: 0, column: 4 },
+  ]
+  const peopleTree = twoPairPartnerThreeChildrenOneNonFamily
+  const dimensions = peopleTreeToChartDimensions(peopleTree)
+
+  // act
+  // assert
+  dimensionRange.forEach((c, idx) => {
+    expect(
+      getDistance(c, dimensions, twoPairPartnerThreeChildrenOneNonFamily)
+    ).toEqual(idx + 1)
+  })
 })
