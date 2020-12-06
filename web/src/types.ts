@@ -1,6 +1,11 @@
 export type BookId = number
 export type PersonId = number
-export type RelationshipType = 'partner' | 'parent' | 'child' | 'sibling'
+export type RelationshipType =
+  | 'partner'
+  | 'parent'
+  | 'child'
+  | 'sibling'
+  | 'direct-cousin'
 export type RelatedPeople = {
   id: number
   name: string

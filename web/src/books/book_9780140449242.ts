@@ -10,6 +10,18 @@ export const book_9780140449242: Book = {
     read: 25,
   },
   peopleByPage: {
+    0: {
+      id: 0,
+      name: 'Pyotr Aleksandrovich Miusov',
+      page: 22,
+      relations: [
+        {
+          to: 1,
+          type: 'direct-cousin',
+          page: 22,
+        },
+      ],
+    },
     1: {
       id: 1,
       name: 'Adelaida Ivanovna Miusova',
@@ -24,6 +36,11 @@ export const book_9780140449242: Book = {
           to: 3,
           type: 'parent',
           page: 16,
+        },
+        {
+          to: 0,
+          type: 'direct-cousin',
+          page: 22,
         },
       ],
     },
