@@ -8,6 +8,9 @@ const SIZE_OFFSET_COLUMN_WIDTH = 200
 const SIZE_ROW_HEIGHT = 250
 const SIZE_COLUMN_WIDTH = 300
 const SIZE_OFFSET_SIBLING_HEIGHT = 50
+const PERSON_FILL = '#880e4f'
+const NEW_PERSON_FILL = '#d0084d'
+const PERSON_RADIUS = 60
 
 function getNextPersonColumn(dimensions: PeopleSVGDimensions[], level: number) {
   const columns = dimensions.filter((d) => d.row === level).map((d) => d.column)
@@ -97,29 +100,126 @@ export function peopleTreeToChartDimensions(
   return dimensions
 }
 
-function mapDimensionsToSVGCanvas(
-  dimensions: PeopleSVGDimensions[]
-): PeopleSVGDimensions[] {
+function normaliseDimensions(dimensions: PeopleSVGDimensions[]) {
   const minCol = Math.min(...dimensions.map((d) => d.column))
   const minRow = Math.min(...dimensions.map((d) => d.row))
   const adjCol = -minCol
   const adjRow = -minRow
   return dimensions.map((d) => ({
     id: d.id,
-    row: (d.row + adjRow) * SIZE_ROW_HEIGHT + SIZE_OFFSET_ROW_HEIGHT,
-    column: (d.column + adjCol) * SIZE_COLUMN_WIDTH + SIZE_OFFSET_COLUMN_WIDTH,
+    row: d.row + adjRow,
+    column: d.column + adjCol,
   }))
+}
+
+function mapDimensionsToSVGCanvas(
+  dimensions: PeopleSVGDimensions[]
+): PeopleSVGDimensions[] {
+  return dimensions.map((d) => ({
+    id: d.id,
+    row: d.row * SIZE_ROW_HEIGHT + SIZE_OFFSET_ROW_HEIGHT,
+    column: d.column * SIZE_COLUMN_WIDTH + SIZE_OFFSET_COLUMN_WIDTH,
+  }))
+}
+
+export function getDistance(
+  dimension: PeopleSVGDimensions,
+  dimensions: PeopleSVGDimensions[],
+  peopleTree: PeopleTree
+) {
+  const p1 = peopleTree[dimension.id]
+  const p1D = dimension
+  const totalDistance = p1.relations
+    .filter((r) => r.type === 'child' || r.type === 'parent')
+    .map((r) => {
+      const p2D = dimensions.find((d) => d.id === r.to)!
+      const distance = Math.abs(p1D.column - p2D.column)
+      return distance
+    })
+    .reduce((a, b) => a + b, 0)
+  return totalDistance
+}
+
+export function optimiseDimensions(
+  dimensions: PeopleSVGDimensions[],
+  peopleTree: PeopleTree
+) {
+  const optimisedDimensions: PeopleSVGDimensions[] = []
+  const maxColumn = dimensions.reduce(
+    (column, d) => (d.column > column ? d.column : column),
+    0
+  )
+  const maxColumnByRow: Record<number, number> = {}
+
+  const getMaxAvailableColumn = (row: number) => {
+    const mcr = maxColumnByRow[row]
+    if (!mcr) return maxColumn
+    return mcr - 1
+  }
+
+  const setMaxAvailableColumn = (row: number, column: number) => {
+    if (!maxColumnByRow[row] || maxColumnByRow[row] > column) {
+      maxColumnByRow[row] = column
+    }
+  }
+
+  const getLatestDimensions = () => {
+    return dimensions.map((d) => {
+      const optD = optimisedDimensions.find((o) => o.id === d.id)
+      if (optD) return optD
+      return d
+    })
+  }
+
+  const sorted = dimensions
+    .sort((a, b) => {
+      if (a.row === b.row) {
+        return a.column - b.column
+      }
+      return a.row - b.row
+    })
+    .reverse()
+
+  for (let i = 0; i < sorted.length; i++) {
+    let dimension = sorted[i]
+    let optimalDimension = dimension
+    let distance = getDistance(dimension, getLatestDimensions(), peopleTree)
+    const maxAvailableColumn = getMaxAvailableColumn(dimension.row)
+
+    for (let j = dimension.column; j <= maxAvailableColumn; j++) {
+      const nextDimension = { ...dimension, column: j }
+      const nextDistance = getDistance(
+        nextDimension,
+        getLatestDimensions(),
+        peopleTree
+      )
+      if (nextDistance <= distance) {
+        distance = nextDistance
+        optimalDimension = nextDimension
+      }
+      if (nextDistance > distance || j === maxAvailableColumn) {
+        optimisedDimensions.push(optimalDimension)
+        setMaxAvailableColumn(optimalDimension.row, optimalDimension.column)
+        break
+      }
+    }
+  }
+  return optimisedDimensions
 }
 
 interface Props {
   peopleTree: PeopleTree
+  page: number
+  startPage: number
 }
 
-export function CharacterGraph({ peopleTree }: Props) {
-  const dimensions = mapDimensionsToSVGCanvas(
-    peopleTreeToChartDimensions(peopleTree)
+export function CharacterGraph({ peopleTree, page, startPage }: Props) {
+  const opt = optimiseDimensions(
+    normaliseDimensions(peopleTreeToChartDimensions(peopleTree)),
+    peopleTree
   )
-  let processedSpouses: number[] = []
+  const dimensions = mapDimensionsToSVGCanvas(opt)
+  let processedPartners: number[] = []
 
   const singleParents = dimensions
     .map((d) => {
@@ -206,7 +306,7 @@ export function CharacterGraph({ peopleTree }: Props) {
     const p1 = peopleTree[d.id]!
     const p1D = dimensions.find((d) => d.id === p1.id)!
     const partners = p1.relations.filter(
-      (r) => r.type === 'partner' && !processedSpouses.includes(r.to)
+      (r) => r.type === 'partner' && !processedPartners.includes(r.to)
     )
     if (partners.length === 0) return null
 
@@ -281,85 +381,6 @@ export function CharacterGraph({ peopleTree }: Props) {
     return lines
   })
 
-  //     // partners have children together
-  //     const childrenLines = p1.relations
-  //       .filter((r) => r.type === 'parent')
-  //       .map((c) => peopleTree[c.to])
-  //       .filter((p) =>
-  //         p.relations.some((r) => r.to === p2.id && r.type === 'child')
-  //       )
-  //       .map((c) => {
-  //         const x = p2D.column - SIZE_COLUMN_WIDTH / 2
-  //         const cd = dimensions.find((d) => d.id === c.id)!
-
-  //         const partnerChildren = p1.relations.filter((r1) => {
-  //           return (
-  //             r1.type === 'parent' &&
-  //             p2.relations.some((r2) => r2.to === r1.to)
-  //           )
-  //         })
-
-  //         console.log('>>> partnerChildren', partnerChildren)
-
-  //         const y2 = cd.row - SIZE_OFFSET_SIBLING_HEIGHT
-  //         const xc = cd.column
-  //         const parentToChildLine = (
-  //           <line
-  //             key={`parent-child-${c.id}`}
-  //             x1={x}
-  //             y1={y1}
-  //             x2={xc}
-  //             y2={y2}
-  //             stroke={colors[idx]}
-  //             strokeWidth="4px"
-  //           />
-  //         )
-  //         const adjacentChildLine = (
-  //           <line
-  //             key={`adjacent-child-${c.id}`}
-  //             y1={y2}
-  //             y2={y2}
-  //             x1={xc}
-  //             x2={x}
-  //             stroke={colors[idx]}
-  //             strokeWidth="4px"
-  //           />
-  //         )
-  //         const childToParent = (
-  //           <line
-  //             key={`child-to-parent-${cd.id}`}
-  //             y1={cd.row - SIZE_OFFSET_SIBLING_HEIGHT}
-  //             y2={cd.row}
-  //             x1={cd.column}
-  //             x2={cd.column}
-  //             stroke={colors[0]}
-  //             strokeWidth="4px"
-  //           />
-  //         )
-  //         return [parentToChildLine, childToParent]
-  //       })
-  //       .flat()
-
-  //     return (
-  //       <Fragment key={`partner-line-${d.id}`}>
-  //         <line
-  //           y1={d.row}
-  //           y2={d.row}
-  //           x1={d.column}
-  //           x2={p2D.column}
-  //           stroke={colors[idx]}
-  //           strokeWidth="10px"
-  //         />
-  //         {childrenLines}
-  //       </Fragment>
-  //     )
-  //   })
-  //   processedSpouses.push(d.id)
-  //   return lines
-  // })
-  // .filter(Boolean)
-  // .flat()
-
   return (
     <div>
       <svg
@@ -373,9 +394,16 @@ export function CharacterGraph({ peopleTree }: Props) {
         {singleParentLines}
         {partnerLines}
         {dimensions.map((d) => {
+          const person = peopleTree[d.id]
+          const isIntroduced = page > startPage && person.page === page
           return (
             <Fragment key={`person-${d.id}`}>
-              <circle cx={d.column} cy={d.row} fill="#880e4f" r={60} />
+              <circle
+                cx={d.column}
+                cy={d.row}
+                fill={isIntroduced ? NEW_PERSON_FILL : PERSON_FILL}
+                r={PERSON_RADIUS}
+              />
               <Tooltip title={peopleTree[d.id].name}>
                 <text x={d.column - 25} y={d.row + 5} fill="white">
                   {firstNLetters(peopleTree[d.id].name, 6)}

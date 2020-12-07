@@ -13,12 +13,12 @@ export const book_9780140449242: Book = {
     0: {
       id: 0,
       name: 'Pyotr Aleksandrovich Miusov',
-      page: 22,
+      page: 19,
       relations: [
         {
           to: 1,
           type: 'direct-cousin',
-          page: 22,
+          page: 19,
         },
       ],
     },
@@ -40,6 +40,11 @@ export const book_9780140449242: Book = {
         {
           to: 0,
           type: 'direct-cousin',
+          page: 22,
+        },
+        {
+          to: 8,
+          type: 'child',
           page: 22,
         },
       ],

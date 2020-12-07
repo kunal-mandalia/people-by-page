@@ -81,7 +81,11 @@ export function Book() {
         page={page}
         onPageChange={handlePageChange}
       />
-      <CharacterGraph peopleTree={peopleByPage} />
+      <CharacterGraph
+        peopleTree={peopleByPage}
+        page={page}
+        startPage={book.pages.start}
+      />
     </div>
   )
 }
