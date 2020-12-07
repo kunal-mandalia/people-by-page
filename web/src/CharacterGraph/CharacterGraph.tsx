@@ -8,6 +8,9 @@ const SIZE_OFFSET_COLUMN_WIDTH = 200
 const SIZE_ROW_HEIGHT = 250
 const SIZE_COLUMN_WIDTH = 300
 const SIZE_OFFSET_SIBLING_HEIGHT = 50
+const PERSON_FILL = '#880e4f'
+const NEW_PERSON_FILL = '#d0084d'
+const PERSON_RADIUS = 60
 
 function getNextPersonColumn(dimensions: PeopleSVGDimensions[], level: number) {
   const columns = dimensions.filter((d) => d.row === level).map((d) => d.column)
@@ -126,14 +129,15 @@ export function getDistance(
 ) {
   const p1 = peopleTree[dimension.id]
   const p1D = dimension
-  return p1.relations
+  const totalDistance = p1.relations
     .filter((r) => r.type === 'child' || r.type === 'parent')
     .map((r) => {
       const p2D = dimensions.find((d) => d.id === r.to)!
-      const distance = Math.abs(p2D.column - p1D.column)
+      const distance = Math.abs(p1D.column - p2D.column)
       return distance
     })
     .reduce((a, b) => a + b, 0)
+  return totalDistance
 }
 
 export function optimiseDimensions(
@@ -206,9 +210,11 @@ export function optimiseDimensions(
 
 interface Props {
   peopleTree: PeopleTree
+  page: number
+  startPage: number
 }
 
-export function CharacterGraph({ peopleTree }: Props) {
+export function CharacterGraph({ peopleTree, page, startPage }: Props) {
   const opt = optimiseDimensions(
     normaliseDimensions(peopleTreeToChartDimensions(peopleTree)),
     peopleTree
@@ -389,9 +395,16 @@ export function CharacterGraph({ peopleTree }: Props) {
         {singleParentLines}
         {partnerLines}
         {dimensions.map((d) => {
+          const person = peopleTree[d.id]
+          const isIntroduced = page > startPage && person.page === page
           return (
             <Fragment key={`person-${d.id}`}>
-              <circle cx={d.column} cy={d.row} fill="#880e4f" r={60} />
+              <circle
+                cx={d.column}
+                cy={d.row}
+                fill={isIntroduced ? NEW_PERSON_FILL : PERSON_FILL}
+                r={PERSON_RADIUS}
+              />
               <Tooltip title={peopleTree[d.id].name}>
                 <text x={d.column - 25} y={d.row + 5} fill="white">
                   {firstNLetters(peopleTree[d.id].name, 6)}

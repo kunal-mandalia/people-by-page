@@ -19,7 +19,7 @@ export function Book() {
 
   useEffect(() => {
     if (book) {
-      setPage(25)
+      setPage(book.pages.start)
 
       const peopleTree = book.peopleByPage
       const peopleByCurrentPage = Object.keys(book.peopleByPage).reduce(
@@ -81,7 +81,11 @@ export function Book() {
         page={page}
         onPageChange={handlePageChange}
       />
-      <CharacterGraph peopleTree={peopleByPage} />
+      <CharacterGraph
+        peopleTree={peopleByPage}
+        page={page}
+        startPage={book.pages.start}
+      />
     </div>
   )
 }
