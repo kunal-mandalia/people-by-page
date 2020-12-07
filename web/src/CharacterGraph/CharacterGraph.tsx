@@ -193,7 +193,6 @@ export function optimiseDimensions(
         getLatestDimensions(),
         peopleTree
       )
-      // debugger
       if (nextDistance <= distance) {
         distance = nextDistance
         optimalDimension = nextDimension
