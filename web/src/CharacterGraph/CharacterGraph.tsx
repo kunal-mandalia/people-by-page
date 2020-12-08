@@ -1,16 +1,35 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useState } from 'react'
 import { colors, firstNLetters } from '../util'
 import { PeopleSVGDimensions, PeopleTree } from '../types'
 import Tooltip from '@material-ui/core/Tooltip'
+import { makeStyles } from '@material-ui/core'
 
 const SIZE_OFFSET_ROW_HEIGHT = 100
-const SIZE_OFFSET_COLUMN_WIDTH = 200
+const SIZE_OFFSET_COLUMN_WIDTH = 250
 const SIZE_ROW_HEIGHT = 250
 const SIZE_COLUMN_WIDTH = 300
-const SIZE_OFFSET_SIBLING_HEIGHT = 50
+const SIZE_OFFSET_SIBLING_HEIGHT = 75
 const PERSON_FILL = '#880e4f'
 const NEW_PERSON_FILL = '#d0084d'
+const BACKGROUND_FILL = '#222222'
 const PERSON_RADIUS = 60
+
+const useStyles = makeStyles((theme) => ({
+  zoomControl: {
+    stroke: theme.palette.secondary.dark,
+    strokeWidth: 2,
+    fill: BACKGROUND_FILL,
+    cursor: 'pointer',
+  },
+  zoomControlText: {
+    fill: theme.palette.secondary.dark,
+    cursor: 'pointer',
+    userSelect: 'none',
+  },
+  personCircle: {
+    userSelect: 'none',
+  },
+}))
 
 function getNextPersonColumn(dimensions: PeopleSVGDimensions[], level: number) {
   const columns = dimensions.filter((d) => d.row === level).map((d) => d.column)
@@ -113,12 +132,13 @@ function normaliseDimensions(dimensions: PeopleSVGDimensions[]) {
 }
 
 function mapDimensionsToSVGCanvas(
-  dimensions: PeopleSVGDimensions[]
+  dimensions: PeopleSVGDimensions[],
+  zoom: number = 1
 ): PeopleSVGDimensions[] {
   return dimensions.map((d) => ({
     id: d.id,
-    row: d.row * SIZE_ROW_HEIGHT + SIZE_OFFSET_ROW_HEIGHT,
-    column: d.column * SIZE_COLUMN_WIDTH + SIZE_OFFSET_COLUMN_WIDTH,
+    row: d.row * SIZE_ROW_HEIGHT * zoom + SIZE_OFFSET_ROW_HEIGHT,
+    column: d.column * SIZE_COLUMN_WIDTH * zoom + SIZE_OFFSET_COLUMN_WIDTH,
   }))
 }
 
@@ -214,11 +234,19 @@ interface Props {
 }
 
 export function CharacterGraph({ peopleTree, page, startPage }: Props) {
+  const [zoom, setZoom] = useState<number>(1)
+  const classes = useStyles()
+
+  const handleZoom = (out: boolean) => () => {
+    const nextZoom = zoom + (out ? -0.1 : 0.1)
+    setZoom(nextZoom)
+  }
+
   const opt = optimiseDimensions(
     normaliseDimensions(peopleTreeToChartDimensions(peopleTree)),
     peopleTree
   )
-  const dimensions = mapDimensionsToSVGCanvas(opt)
+  const dimensions = mapDimensionsToSVGCanvas(opt, zoom)
   let processedPartners: number[] = []
 
   const singleParents = dimensions
@@ -266,7 +294,7 @@ export function CharacterGraph({ peopleTree, page, startPage }: Props) {
             childrenDimensions.map((cd) => cd.id)
           )}`}
           y1={parentDimensions.row}
-          y2={y - SIZE_OFFSET_SIBLING_HEIGHT}
+          y2={y - SIZE_OFFSET_SIBLING_HEIGHT * zoom}
           x1={parentDimensions.column}
           x2={xAvg}
           stroke={colors[0]}
@@ -279,8 +307,8 @@ export function CharacterGraph({ peopleTree, page, startPage }: Props) {
             key={`adjacent-child-${JSON.stringify(
               childrenDimensions.map((cd) => cd.id)
             )}`}
-            y1={y - SIZE_OFFSET_SIBLING_HEIGHT}
-            y2={y - SIZE_OFFSET_SIBLING_HEIGHT}
+            y1={y - SIZE_OFFSET_SIBLING_HEIGHT * zoom}
+            y2={y - SIZE_OFFSET_SIBLING_HEIGHT * zoom}
             x1={xMin}
             x2={xMax}
             stroke={colors[0]}
@@ -290,7 +318,7 @@ export function CharacterGraph({ peopleTree, page, startPage }: Props) {
       const childToParent = childrenDimensions.map((cd) => (
         <line
           key={`child-to-parent-${cd.id}`}
-          y1={cd.row - SIZE_OFFSET_SIBLING_HEIGHT}
+          y1={cd.row - SIZE_OFFSET_SIBLING_HEIGHT * zoom}
           y2={cd.row}
           x1={cd.column}
           x2={cd.column}
@@ -340,7 +368,7 @@ export function CharacterGraph({ peopleTree, page, startPage }: Props) {
         const c1D = p1p2ChildrenDimensions[0]!
 
         const siblingY =
-          p1p2ChildrenDimensions[0]!.row - SIZE_OFFSET_SIBLING_HEIGHT
+          p1p2ChildrenDimensions[0]!.row - SIZE_OFFSET_SIBLING_HEIGHT * zoom
         const siblingLine = (
           <line
             key={`siblingLine:${p.to}:${c1D.id}`}
@@ -348,7 +376,7 @@ export function CharacterGraph({ peopleTree, page, startPage }: Props) {
             y2={siblingY}
             x1={siblingLineX1}
             x2={siblingLineX2}
-            stroke={colors[idx]}
+            stroke={colors[0]}
             strokeWidth="4px"
           />
         )
@@ -359,7 +387,7 @@ export function CharacterGraph({ peopleTree, page, startPage }: Props) {
             y1={p1D.row}
             x2={p2D.column}
             y2={p2D.row}
-            stroke={colors[idx]}
+            stroke={colors[0]}
             strokeWidth="8px"
           />
         )
@@ -369,12 +397,30 @@ export function CharacterGraph({ peopleTree, page, startPage }: Props) {
             x1={parentMidpoint}
             y1={p1D.row}
             x2={siblingMidpointCol}
-            y2={c1D.row - SIZE_OFFSET_SIBLING_HEIGHT}
-            stroke={colors[idx]}
+            y2={c1D.row - SIZE_OFFSET_SIBLING_HEIGHT * zoom}
+            stroke={colors[0]}
             strokeWidth="4px"
           />
         )
-        return [parentToParentLine, parentToMidSiblingLine, siblingLine]
+        const childToParent = p1p2ChildrenDimensions
+          .filter(Boolean)
+          .map((cd) => (
+            <line
+              key={`child-to-parent-${cd!.id}`}
+              y1={cd!.row - SIZE_OFFSET_SIBLING_HEIGHT * zoom}
+              y2={cd!.row}
+              x1={cd!.column}
+              x2={cd!.column}
+              stroke={colors[0]}
+              strokeWidth="4px"
+            />
+          ))
+        return [
+          ...childToParent,
+          parentToParentLine,
+          parentToMidSiblingLine,
+          siblingLine,
+        ]
       })
       .flat()
       .filter(Boolean)
@@ -390,7 +436,47 @@ export function CharacterGraph({ peopleTree, page, startPage }: Props) {
         height="100vh"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <rect width="100%" height="100%" fill="#222222" />
+        <rect width="100%" height="100%" fill={BACKGROUND_FILL} />
+        {/* Zoom */}
+        <rect
+          width="32"
+          height="32"
+          x={100}
+          y={10}
+          rx={4}
+          ry={4}
+          onClick={handleZoom(false)}
+          className={classes.zoomControl}
+        ></rect>
+        <text
+          x={108}
+          y={34}
+          fontSize="28"
+          onClick={handleZoom(false)}
+          className={classes.zoomControlText}
+        >
+          +
+        </text>
+
+        <rect
+          width="32"
+          height="32"
+          x={100}
+          y={50}
+          rx={4}
+          ry={4}
+          onClick={handleZoom(true)}
+          className={classes.zoomControl}
+        />
+        <text
+          x={109}
+          y={74}
+          fontSize="28"
+          onClick={handleZoom(true)}
+          className={classes.zoomControlText}
+        >
+          –
+        </text>
         {singleParentLines}
         {partnerLines}
         {dimensions.map((d) => {
@@ -402,10 +488,16 @@ export function CharacterGraph({ peopleTree, page, startPage }: Props) {
                 cx={d.column}
                 cy={d.row}
                 fill={isIntroduced ? NEW_PERSON_FILL : PERSON_FILL}
-                r={PERSON_RADIUS}
+                r={PERSON_RADIUS * zoom}
               />
               <Tooltip title={peopleTree[d.id].name}>
-                <text x={d.column - 25} y={d.row + 5} fill="white">
+                <text
+                  x={d.column - 25 * zoom}
+                  y={d.row + 5 * zoom}
+                  fill="white"
+                  fontSize={16 * zoom}
+                  className={classes.personCircle}
+                >
                   {firstNLetters(peopleTree[d.id].name, 6)}
                 </text>
               </Tooltip>
