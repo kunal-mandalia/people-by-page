@@ -15,6 +15,12 @@ const BACKGROUND_FILL = '#222222'
 const PERSON_RADIUS = 60
 
 const useStyles = makeStyles((theme) => ({
+  grab: {
+    cursor: 'grab',
+  },
+  grabbing: {
+    cursor: 'grabbing',
+  },
   zoomControl: {
     stroke: theme.palette.secondary.dark,
     strokeWidth: 2,
@@ -233,13 +239,59 @@ interface Props {
   startPage: number
 }
 
+const defaultPan = {
+  dragging: false,
+  initial: { x: 0, y: 0 },
+  difference: { x: 0, y: 0 },
+}
+
 export function CharacterGraph({ peopleTree, page, startPage }: Props) {
   const [zoom, setZoom] = useState<number>(1)
+  const [pan, setPan] = useState<{
+    dragging: boolean
+    initial: { x: number; y: number }
+    difference: { x: number; y: number }
+  }>(defaultPan)
+
   const classes = useStyles()
 
   const handleZoom = (out: boolean) => () => {
     const nextZoom = zoom + (out ? -0.1 : 0.1)
     setZoom(nextZoom)
+  }
+
+  const handleMouseMove = (
+    event: React.MouseEvent<SVGRectElement, MouseEvent>
+  ) => {
+    if (pan.dragging) {
+      setPan({
+        ...pan,
+        difference: {
+          x: event.pageX - pan.initial.x,
+          y: event.pageY - pan.initial.y,
+        },
+      })
+    }
+  }
+
+  const handleMouseDown = (
+    event: React.MouseEvent<SVGRectElement, MouseEvent>
+  ) => {
+    setPan({
+      ...pan,
+      dragging: true,
+      initial: {
+        x: event.pageX - pan.difference.x,
+        y: event.pageY - pan.difference.y,
+      },
+    })
+  }
+
+  const handleMouseUp = () => {
+    setPan({
+      ...pan,
+      dragging: false,
+    })
   }
 
   const opt = optimiseDimensions(
@@ -293,10 +345,10 @@ export function CharacterGraph({ peopleTree, page, startPage }: Props) {
           key={`single-parent-child-${JSON.stringify(
             childrenDimensions.map((cd) => cd.id)
           )}`}
-          y1={parentDimensions.row}
-          y2={y - SIZE_OFFSET_SIBLING_HEIGHT * zoom}
-          x1={parentDimensions.column}
-          x2={xAvg}
+          y1={parentDimensions.row + pan.difference.y}
+          y2={y + pan.difference.y - SIZE_OFFSET_SIBLING_HEIGHT * zoom}
+          x1={parentDimensions.column + pan.difference.x}
+          x2={xAvg + pan.difference.x}
           stroke={colors[0]}
           strokeWidth="4px"
         />
@@ -307,10 +359,10 @@ export function CharacterGraph({ peopleTree, page, startPage }: Props) {
             key={`adjacent-child-${JSON.stringify(
               childrenDimensions.map((cd) => cd.id)
             )}`}
-            y1={y - SIZE_OFFSET_SIBLING_HEIGHT * zoom}
-            y2={y - SIZE_OFFSET_SIBLING_HEIGHT * zoom}
-            x1={xMin}
-            x2={xMax}
+            y1={y + pan.difference.y - SIZE_OFFSET_SIBLING_HEIGHT * zoom}
+            y2={y + pan.difference.y - SIZE_OFFSET_SIBLING_HEIGHT * zoom}
+            x1={xMin + pan.difference.x}
+            x2={xMax + pan.difference.x}
             stroke={colors[0]}
             strokeWidth="4px"
           />
@@ -318,10 +370,10 @@ export function CharacterGraph({ peopleTree, page, startPage }: Props) {
       const childToParent = childrenDimensions.map((cd) => (
         <line
           key={`child-to-parent-${cd.id}`}
-          y1={cd.row - SIZE_OFFSET_SIBLING_HEIGHT * zoom}
-          y2={cd.row}
-          x1={cd.column}
-          x2={cd.column}
+          y1={cd.row + pan.difference.y - SIZE_OFFSET_SIBLING_HEIGHT * zoom}
+          y2={cd.row + pan.difference.y}
+          x1={cd.column + pan.difference.x}
+          x2={cd.column + pan.difference.x}
           stroke={colors[0]}
           strokeWidth="4px"
         />
@@ -372,10 +424,10 @@ export function CharacterGraph({ peopleTree, page, startPage }: Props) {
         const siblingLine = (
           <line
             key={`siblingLine:${p.to}:${c1D.id}`}
-            y1={siblingY}
-            y2={siblingY}
-            x1={siblingLineX1}
-            x2={siblingLineX2}
+            y1={siblingY + pan.difference.y}
+            y2={siblingY + pan.difference.y}
+            x1={siblingLineX1 + pan.difference.x}
+            x2={siblingLineX2 + pan.difference.x}
             stroke={colors[0]}
             strokeWidth="4px"
           />
@@ -383,10 +435,10 @@ export function CharacterGraph({ peopleTree, page, startPage }: Props) {
         const parentToParentLine = (
           <line
             key={`parentToParentLine:${p.to}:${p1D.id}:${p2D.id}`}
-            x1={p1D.column}
-            y1={p1D.row}
-            x2={p2D.column}
-            y2={p2D.row}
+            x1={p1D.column + pan.difference.x}
+            y1={p1D.row + pan.difference.y}
+            x2={p2D.column + pan.difference.x}
+            y2={p2D.row + pan.difference.y}
             stroke={colors[0]}
             strokeWidth="8px"
           />
@@ -394,10 +446,10 @@ export function CharacterGraph({ peopleTree, page, startPage }: Props) {
         const parentToMidSiblingLine = (
           <line
             key={`parentToMidSiblingLine:${p.to}:${siblingMidpointCol}`}
-            x1={parentMidpoint}
-            y1={p1D.row}
-            x2={siblingMidpointCol}
-            y2={c1D.row - SIZE_OFFSET_SIBLING_HEIGHT * zoom}
+            x1={parentMidpoint + pan.difference.x}
+            y1={p1D.row + pan.difference.y}
+            x2={siblingMidpointCol + pan.difference.x}
+            y2={c1D.row + pan.difference.y - SIZE_OFFSET_SIBLING_HEIGHT * zoom}
             stroke={colors[0]}
             strokeWidth="4px"
           />
@@ -407,10 +459,12 @@ export function CharacterGraph({ peopleTree, page, startPage }: Props) {
           .map((cd) => (
             <line
               key={`child-to-parent-${cd!.id}`}
-              y1={cd!.row - SIZE_OFFSET_SIBLING_HEIGHT * zoom}
-              y2={cd!.row}
-              x1={cd!.column}
-              x2={cd!.column}
+              y1={
+                cd!.row + pan.difference.y - SIZE_OFFSET_SIBLING_HEIGHT * zoom
+              }
+              y2={cd!.row + pan.difference.y}
+              x1={cd!.column + pan.difference.x}
+              x2={cd!.column + pan.difference.x}
               stroke={colors[0]}
               strokeWidth="4px"
             />
@@ -436,7 +490,15 @@ export function CharacterGraph({ peopleTree, page, startPage }: Props) {
         height="100vh"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <rect width="100%" height="100%" fill={BACKGROUND_FILL} />
+        <rect
+          width="100%"
+          height="100%"
+          fill={BACKGROUND_FILL}
+          onMouseDown={handleMouseDown}
+          onMouseUp={handleMouseUp}
+          onMouseMove={handleMouseMove}
+          className={pan.dragging ? classes.grabbing : classes.grab}
+        />
         {/* Zoom */}
         <rect
           width="32"
@@ -485,15 +547,15 @@ export function CharacterGraph({ peopleTree, page, startPage }: Props) {
           return (
             <Fragment key={`person-${d.id}`}>
               <circle
-                cx={d.column}
-                cy={d.row}
+                cx={d.column + pan.difference.x}
+                cy={d.row + pan.difference.y}
                 fill={isIntroduced ? NEW_PERSON_FILL : PERSON_FILL}
                 r={PERSON_RADIUS * zoom}
               />
               <Tooltip title={peopleTree[d.id].name}>
                 <text
-                  x={d.column - 25 * zoom}
-                  y={d.row + 5 * zoom}
+                  x={d.column + pan.difference.x - 20}
+                  y={d.row + pan.difference.y + 5}
                   fill="white"
                   fontSize={16 * zoom}
                   className={classes.personCircle}
