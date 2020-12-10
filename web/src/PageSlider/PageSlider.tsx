@@ -16,6 +16,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     padding: '15px 40px',
     color: theme.palette.grey[100],
+    userSelect: 'none',
   },
   slider: {
     color: 'white',

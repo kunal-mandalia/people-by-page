@@ -585,8 +585,8 @@ export function CharacterGraph({ peopleTree, page, startPage }: Props) {
               />
               <Tooltip title={peopleTree[d.id].name}>
                 <text
-                  x={d.column + pan.difference.x - 20}
-                  y={d.row + pan.difference.y + 5}
+                  x={d.column + pan.difference.x - 25 * zoom}
+                  y={d.row + pan.difference.y + 5 * zoom}
                   fill="white"
                   fontSize={16 * zoom}
                   className={classes.personCircle}
