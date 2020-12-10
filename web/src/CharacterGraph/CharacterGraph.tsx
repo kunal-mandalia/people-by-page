@@ -47,13 +47,17 @@ export function peopleTreeToChartDimensions(
   peopleTree: PeopleTree
 ): PeopleSVGDimensions[] {
   let dimensions: PeopleSVGDimensions[] = []
-  let queue: { id: number; level: number }[] = []
+  let queue: { id: number; level: number; root: boolean }[] = []
   let processedIds: number[] = []
   const ids = Object.keys(peopleTree).map((n) => Number(n))
 
   if (ids.length === 0) return dimensions
 
-  queue.push({ id: Number(ids[0]), level: 0 })
+  const getIsRoot = (id: number) => {
+    return peopleTree[id]!.relations.length === 0
+  }
+
+  queue.push({ id: Number(ids[0]), level: 0, root: getIsRoot(ids[0]) })
 
   while (processedIds.length < ids.length) {
     if (queue.length > 0) {
@@ -69,13 +73,14 @@ export function peopleTreeToChartDimensions(
         id: person.id,
         row: level,
         column: getNextPersonColumn(dimensions, level),
+        root: getIsRoot(person.id),
       })
       processedIds.push(id)
 
       // 1. partners
       const partners = person.relations
         .filter((r) => r.type === 'partner')
-        .map((s) => ({ id: s.to, level }))
+        .map((s) => ({ id: s.to, level, root: getIsRoot(s.to) }))
 
       if (partners.length > 0) {
         queue.push(...partners)
@@ -84,7 +89,7 @@ export function peopleTreeToChartDimensions(
       // 0. direct relationship e.g. cousins without parents defined
       const cousins = person.relations
         .filter((r) => r.type === 'direct')
-        .map((s) => ({ id: s.to, level }))
+        .map((s) => ({ id: s.to, level, root: getIsRoot(s.to) }))
 
       if (cousins.length > 0) {
         queue.push(...cousins)
@@ -93,7 +98,7 @@ export function peopleTreeToChartDimensions(
       // 2. siblings
       const siblings = person.relations
         .filter((r) => r.type === 'sibling')
-        .map((s) => ({ id: s.to, level }))
+        .map((s) => ({ id: s.to, level, root: getIsRoot(s.to) }))
 
       if (siblings.length > 0) {
         queue.push(...siblings)
@@ -102,7 +107,7 @@ export function peopleTreeToChartDimensions(
       // 3. parents
       const parents = person.relations
         .filter((r) => r.type === 'parent')
-        .map((s) => ({ id: s.to, level: level + 1 }))
+        .map((s) => ({ id: s.to, level: level + 1, root: getIsRoot(s.to) }))
 
       if (parents.length > 0) {
         queue.push(...parents)
@@ -111,7 +116,7 @@ export function peopleTreeToChartDimensions(
       // 4. children
       const children = person.relations
         .filter((r) => r.type === 'child')
-        .map((s) => ({ id: s.to, level: level - 1 }))
+        .map((s) => ({ id: s.to, level: level - 1, root: getIsRoot(s.to) }))
 
       if (children.length > 0) {
         queue.push(...children)
@@ -119,7 +124,7 @@ export function peopleTreeToChartDimensions(
     } else {
       // non family
       const nextId = ids.find((id) => !processedIds.includes(id))!
-      queue.push({ id: nextId, level: 0 })
+      queue.push({ id: nextId, level: 0, root: getIsRoot(nextId) })
     }
   }
   return dimensions
@@ -132,8 +137,9 @@ function normaliseDimensions(dimensions: PeopleSVGDimensions[]) {
   const adjRow = -minRow
   return dimensions.map((d) => ({
     id: d.id,
-    row: d.row + adjRow,
+    row: (d.root ? minRow : d.row) + adjRow,
     column: d.column + adjCol,
+    root: d.root,
   }))
 }
 
@@ -145,6 +151,7 @@ function mapDimensionsToSVGCanvas(
     id: d.id,
     row: d.row * SIZE_ROW_HEIGHT * zoom + SIZE_OFFSET_ROW_HEIGHT,
     column: d.column * SIZE_COLUMN_WIDTH * zoom + SIZE_OFFSET_COLUMN_WIDTH,
+    root: d.root,
   }))
 }
 

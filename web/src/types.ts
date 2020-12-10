@@ -39,6 +39,7 @@ export type PeopleSVGDimensions = {
   id: number
   row: number
   column: number
+  root: boolean
 }
 export type Book = {
   ISBN: string
