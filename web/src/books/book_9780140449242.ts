@@ -7,7 +7,7 @@ export const book_9780140449242: Book = {
   pages: {
     start: 15,
     total: 985,
-    read: 25,
+    read: 30,
   },
   peopleByPage: {
     0: {
@@ -191,6 +191,12 @@ export const book_9780140449242: Book = {
       id: 9,
       name: 'Yefim Petrovich Polyonov',
       page: 25,
+      relations: [],
+    },
+    10: {
+      id: 10,
+      name: 'Father Zosima',
+      page: 30,
       relations: [],
     },
   },
