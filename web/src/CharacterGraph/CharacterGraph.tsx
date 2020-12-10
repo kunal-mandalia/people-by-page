@@ -81,9 +81,9 @@ export function peopleTreeToChartDimensions(
         queue.push(...partners)
       }
 
-      // 0. direct cousins
+      // 0. direct relationship e.g. cousins without parents defined
       const cousins = person.relations
-        .filter((r) => r.type === 'direct-cousin')
+        .filter((r) => r.type === 'direct')
         .map((s) => ({ id: s.to, level }))
 
       if (cousins.length > 0) {
@@ -300,6 +300,29 @@ export function CharacterGraph({ peopleTree, page, startPage }: Props) {
   )
   const dimensions = mapDimensionsToSVGCanvas(opt, zoom)
   let processedPartners: number[] = []
+
+  const directRelationsLines = dimensions.map((d1) => {
+    const p1 = peopleTree[d1.id]!
+    return p1.relations
+      .filter((r) => r.type === 'direct')
+      .map((r) => dimensions.find((d) => d.id === r.to)!)
+      .map((dN) => {
+        const line = (
+          <line
+            key={`direct-line-${d1.id}-${dN.id}`}
+            y1={d1.row + pan.difference.y}
+            y2={dN.row + pan.difference.y}
+            x1={d1.column + pan.difference.x}
+            x2={dN.column + pan.difference.x}
+            stroke={colors[0]}
+            strokeWidth="4px"
+          />
+        )
+        return line
+      })
+      .flat()
+      .filter(Boolean)
+  })
 
   const singleParents = dimensions
     .map((d) => {
@@ -539,6 +562,7 @@ export function CharacterGraph({ peopleTree, page, startPage }: Props) {
         >
           –
         </text>
+        {directRelationsLines}
         {singleParentLines}
         {partnerLines}
         {dimensions.map((d) => {

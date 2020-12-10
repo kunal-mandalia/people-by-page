@@ -17,7 +17,7 @@ export const book_9780140449242: Book = {
       relations: [
         {
           to: 1,
-          type: 'direct-cousin',
+          type: 'direct',
           page: 19,
         },
       ],
@@ -39,7 +39,7 @@ export const book_9780140449242: Book = {
         },
         {
           to: 0,
-          type: 'direct-cousin',
+          type: 'direct',
           page: 22,
         },
         {

@@ -5,7 +5,7 @@ export type RelationshipType =
   | 'parent'
   | 'child'
   | 'sibling'
-  | 'direct-cousin'
+  | 'direct'
 export type RelatedPeople = {
   id: number
   name: string
