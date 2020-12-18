@@ -20,26 +20,6 @@ export function Book() {
   useEffect(() => {
     if (book) {
       setPage(book.pages.start)
-
-      const peopleTree = book.peopleByPage
-      const peopleByCurrentPage = Object.keys(book.peopleByPage).reduce(
-        (acc, id) => {
-          const personId = Number(id)
-          const person = peopleTree[personId]
-
-          if (page >= person.page) {
-            acc[personId] = {
-              ...peopleTree[personId],
-              relations: peopleTree[personId].relations.filter(
-                (r) => page >= r.page
-              ),
-            }
-          }
-          return acc
-        },
-        {} as PeopleTree
-      )
-      setPeopleByPage(peopleByCurrentPage)
     }
   }, [book])
 
