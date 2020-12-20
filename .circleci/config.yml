@@ -1,0 +1,46 @@
+version: 2.1
+orbs:
+  node: circleci/node@2.1.1
+jobs:
+  web-tests:
+    working_directory: ~/repo/web
+    executor:
+      name: node/default
+      tag: '12.16.0'
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - web-cache-{{ checksum "yarn.lock" }}
+      - node/install:
+          install-yarn: true
+          install-npm: false
+          node-version: '12.16.0'
+          yarn-version: '1.22.4'
+      - node/install-packages:
+          app-dir: web
+          pkg-manager: yarn
+          cache-key: 'package.json'
+      - save_cache:
+          key: web-cache-{{ checksum "yarn.lock" }}
+          paths:
+            - node_modules
+            - web/node_modules
+            - server/node_modules
+      - run:
+          command: yarn test
+          environment:
+            JEST_JUNIT_OUTPUT_DIR: 'test-results'
+      - store_artifacts:
+          path: ./web/coverage
+      - store_artifacts:
+          path: ./web/test-results
+          prefix: tests
+      - store_test_results:
+          path: ./web/test-results
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - web-tests

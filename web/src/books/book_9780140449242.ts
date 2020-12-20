@@ -42,11 +42,6 @@ export const book_9780140449242: Book = {
           type: 'direct',
           page: 22,
         },
-        {
-          to: 8,
-          type: 'child',
-          page: 22,
-        },
       ],
     },
     2: {
