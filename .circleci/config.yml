@@ -3,16 +3,14 @@ orbs:
   node: circleci/node@2.1.1
 jobs:
   web-tests:
-    working_directory: ~/repo
     executor:
       name: node/default
       tag: '12.16.0'
     steps:
-      - checkout:
-          path: ~/repo/web
+      - checkout
       - restore_cache:
           keys:
-            - web-cache-{{ checksum "package.json" }}
+            - web-cache-{{ checksum "web/package.json" }}
       - node/install:
           install-yarn: true
           install-npm: false
@@ -22,7 +20,7 @@ jobs:
           app-dir: web
           pkg-manager: yarn
       - save_cache:
-          key: web-cache-{{ checksum "package.json" }}
+          key: web-cache-{{ checksum "web/package.json" }}
           paths:
             - node_modules
             - web/node_modules
