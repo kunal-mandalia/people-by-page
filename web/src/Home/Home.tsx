@@ -11,8 +11,17 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     fontWeight: 800,
-    color: theme.palette.grey[500],
+    color: theme.palette.grey[600],
   },
+  book: {
+    padding: theme.spacing(2),
+    color: theme.palette.grey[200],
+    cursor: 'pointer',
+    '&:hover': {
+      backgroundColor: '#2a2a2a',
+    },
+  },
+
   bookTitle: {
     color: theme.palette.grey[200],
     cursor: 'pointer',
@@ -21,8 +30,13 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   author: {
+    fontSize: 'medium',
     fontStyle: 'italic',
     color: theme.palette.grey[500],
+  },
+  ISBN: {
+    fontSize: 'smallest',
+    color: theme.palette.grey[600],
   },
 }))
 
@@ -31,27 +45,28 @@ export function Home() {
   const history = useHistory()
   return (
     <div className={classes.root}>
-      <Typography variant="overline" classes={{ root: classes.title }}>
+      <Typography variant="h6" classes={{ root: classes.title }}>
         <span>
-          PEOPLE BY <span>📓</span> PAGE
+          People by <span>📓</span> Page
         </span>
       </Typography>
       <br />
       <br />
       {books.map((b) => (
-        <div key={b.ISBN}>
-          <Typography
-            variant="h4"
-            className={classes.bookTitle}
-            onClick={() => {
-              history.push(`/book/${b.ISBN}`)
-            }}
-          >
-            {b.name}
+        <div
+          key={b.ISBN}
+          onClick={() => {
+            history.push(`/book/${b.ISBN}`)
+          }}
+          className={classes.book}
+        >
+          <Typography variant="h4">{b.name}</Typography>
+          <Typography variant="caption" classes={{ root: classes.author }}>
+            {b.author}
           </Typography>
-          <Typography variant="caption" className={classes.author}>
-            {' '}
-            - {b.author}
+          <br />
+          <Typography variant="caption" classes={{ root: classes.ISBN }}>
+            ISBN: {b.ISBN}
           </Typography>
         </div>
       ))}
