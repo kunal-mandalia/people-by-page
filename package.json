@@ -8,7 +8,8 @@
   "license": "MIT",
   "scripts": {
     "web": "cd web && yarn start",
-    "web-test-ci": "yarn workspace web test-ci"
+    "web-test-ci": "yarn workspace web test-ci",
+    "web-build": "yarn workspace web build"
   },
   "workspaces": [
     "web"
