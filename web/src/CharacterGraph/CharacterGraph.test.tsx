@@ -151,10 +151,10 @@ test('peopleTreeToChartDimensions returns correct dimensions given twoPairPartne
 test('getDistance: returns the distance between person and relations', () => {
   // arrange
   const dimensionRange = [
-    { id: 1, row: 0, column: 1 },
-    { id: 1, row: 0, column: 2 },
-    { id: 1, row: 0, column: 3 },
-    { id: 1, row: 0, column: 4 },
+    { id: 1, row: 0, column: 1, root: false },
+    { id: 1, row: 0, column: 2, root: false },
+    { id: 1, row: 0, column: 3, root: false },
+    { id: 1, row: 0, column: 4, root: false },
   ]
   const peopleTree = twoPairPartnerThreeChildrenOneNonFamily
   const dimensions = peopleTreeToChartDimensions(peopleTree)
