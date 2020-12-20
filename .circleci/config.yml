@@ -17,7 +17,7 @@ jobs:
           app-dir: web
           pkg-manager: yarn
       - run:
-          command: yarn test
+          command: yarn web-test-ci
           environment:
             JEST_JUNIT_OUTPUT_DIR: 'test-results'
       - store_artifacts:
