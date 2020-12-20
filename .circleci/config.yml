@@ -3,11 +3,15 @@ orbs:
   node: circleci/node@2.1.1
 jobs:
   web-tests:
+    working_directory: ~/repo/web
     executor:
       name: node/default
       tag: '12.16.0'
     steps:
       - checkout
+      - restore_cache:
+          keys:
+            - web-cache-{{ checksum "package.json" }}
       - node/install:
           install-yarn: true
           install-npm: false
@@ -16,8 +20,13 @@ jobs:
       - node/install-packages:
           app-dir: web
           pkg-manager: yarn
+      - save_cache:
+          key: web-cache-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+            - web/node_modules
       - run:
-          command: yarn test
+          command: yarn web-test-ci
           environment:
             JEST_JUNIT_OUTPUT_DIR: 'test-results'
       - store_artifacts:
