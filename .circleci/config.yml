@@ -9,7 +9,7 @@ jobs:
       tag: '12.16.0'
     steps:
       - checkout:
-        path: ~/repo
+          path: ~/repo
       - restore_cache:
           keys:
             - web-cache-{{ checksum "package.json" }}
