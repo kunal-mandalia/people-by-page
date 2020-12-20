@@ -3,7 +3,6 @@ orbs:
   node: circleci/node@2.1.1
 jobs:
   web-tests:
-    working_directory: ~/repo/web
     executor:
       name: node/default
       tag: '12.16.0'
