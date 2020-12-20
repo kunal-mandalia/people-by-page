@@ -13,7 +13,7 @@ const PERSON_FILL = '#880e4f'
 const NEW_PERSON_FILL = '#d0084d'
 const BACKGROUND_FILL = '#222222'
 const PERSON_RADIUS = 60
-const INITIAL_ZOOM_LEVEL = 0.8
+const INITIAL_ZOOM_LEVEL = 0.9
 
 const useStyles = makeStyles((theme) => ({
   grab: {

@@ -5,7 +5,7 @@ import { books } from '../books/books'
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    padding: '80px 15px 20px',
+    padding: '80px 0px 20px',
     color: theme.palette.grey[200],
     backgroundColor: theme.palette.grey[900],
   },
