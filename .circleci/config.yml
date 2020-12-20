@@ -9,9 +9,6 @@ jobs:
       tag: '12.16.0'
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - web-cache-{{ checksum "package.json" }}
       - node/install:
           install-yarn: true
           install-npm: false
@@ -20,11 +17,6 @@ jobs:
       - node/install-packages:
           app-dir: web
           pkg-manager: yarn
-      - save_cache:
-          key: web-cache-{{ checksum "package.json" }}
-          paths:
-            - node_modules
-            - web/node_modules
       - run:
           command: yarn web-test-ci
           environment:
