@@ -53,7 +53,7 @@ export function Book() {
 
   return (
     <div>
-      <BookHeader title={book.name} author="Fyodor Dostoyevsky" />
+      <BookHeader title={book.name} author={book.author} ISBN={book.ISBN} />
       <PageSlider
         firstPage={book.pages.start}
         lastPage={book.pages.total}

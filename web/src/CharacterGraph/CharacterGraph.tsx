@@ -13,6 +13,7 @@ const PERSON_FILL = '#880e4f'
 const NEW_PERSON_FILL = '#d0084d'
 const BACKGROUND_FILL = '#222222'
 const PERSON_RADIUS = 60
+const INITIAL_ZOOM_LEVEL = 0.8
 
 const useStyles = makeStyles((theme) => ({
   grab: {
@@ -253,7 +254,7 @@ const defaultPan = {
 }
 
 export function CharacterGraph({ peopleTree, page, startPage }: Props) {
-  const [zoom, setZoom] = useState<number>(1)
+  const [zoom, setZoom] = useState<number>(INITIAL_ZOOM_LEVEL)
   const [pan, setPan] = useState<{
     dragging: boolean
     initial: { x: number; y: number }
@@ -517,7 +518,7 @@ export function CharacterGraph({ peopleTree, page, startPage }: Props) {
         version="1.1"
         baseProfile="full"
         width="100vw"
-        height="100vh"
+        height="calc(100vh - 260px)"
         xmlns="http://www.w3.org/2000/svg"
       >
         <rect

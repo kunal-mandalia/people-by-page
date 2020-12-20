@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
     color: 'white',
   },
   page: {
-    color: theme.palette.grey[200],
+    color: theme.palette.grey[400],
   },
   playPauseButton: {
     margin: '0 8px',
@@ -77,6 +77,19 @@ export function PageSlider({
     }
   }
 
+  const getPageText = () => {
+    if (firstPage > 1 && page === firstPage) {
+      return `Book starts on page ${page}`
+    }
+    if (page === read && read < lastPage) {
+      return `Last page read is ${page}`
+    }
+    if (page === read && read === lastPage) {
+      return `Book ends on page ${lastPage}`
+    }
+    return `Page ${page}`
+  }
+
   useEffect(() => {
     if (isPlaying) {
       if (page === read) {
@@ -111,7 +124,7 @@ export function PageSlider({
           />
           <span>
             <Typography variant="caption" classes={{ root: classes.page }}>
-              Page {page}
+              {getPageText()}
             </Typography>
             <Button
               size="small"
