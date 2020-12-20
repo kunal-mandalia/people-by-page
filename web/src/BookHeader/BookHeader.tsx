@@ -43,14 +43,18 @@ export function BookHeader({ title, author, ISBN }: Props) {
       <span className={classes.titleWrapper}>
         <Tooltip title={<span>Back home to book list</span>}>
           <IconButton onClick={backToHomepage}>
-            <BackIcon color="primary" classes={{ root: classes.icon }} />
+            <BackIcon color="primary" />
           </IconButton>
         </Tooltip>
         <Typography variant="h4" classes={{ root: classes.title }}>
           {title}
         </Typography>
         <Tooltip title={<span>ISBN: {ISBN}</span>}>
-          <InfoIcon color="primary" classes={{ root: classes.icon }} />
+          <InfoIcon
+            color="primary"
+            classes={{ root: classes.icon }}
+            fontSize="small"
+          />
         </Tooltip>
       </span>
       <Typography variant="subtitle2" classes={{ root: classes.author }}>
