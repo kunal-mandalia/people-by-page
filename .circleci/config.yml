@@ -10,7 +10,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - web-cache-{{ checksum "yarn.lock" }}
+            - web-cache-{{ checksum "web/yarn.lock" }}
       - node/install:
           install-yarn: true
           install-npm: false
@@ -20,7 +20,7 @@ jobs:
           app-dir: web
           pkg-manager: yarn
       - save_cache:
-          key: web-cache-{{ checksum "yarn.lock" }}
+          key: web-cache-{{ checksum "web/yarn.lock" }}
           paths:
             - node_modules
             - web/node_modules
