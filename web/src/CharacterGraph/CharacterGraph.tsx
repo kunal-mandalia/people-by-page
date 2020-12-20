@@ -517,7 +517,7 @@ export function CharacterGraph({ peopleTree, page, startPage }: Props) {
         version="1.1"
         baseProfile="full"
         width="100vw"
-        height="100vh"
+        height="calc(100vh - 260px)"
         xmlns="http://www.w3.org/2000/svg"
       >
         <rect
