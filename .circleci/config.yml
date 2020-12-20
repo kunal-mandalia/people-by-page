@@ -13,9 +13,17 @@ jobs:
           install-npm: false
           node-version: '12.16.0'
           yarn-version: '1.22.4'
+      - restore_cache:
+          keys:
+            - v1-web-cache-{{ checksum "web/yarn.lock" }}
       - node/install-packages:
           app-dir: web
           pkg-manager: yarn
+      - save_cache:
+          key: v1-web-cache-{{ checksum "web/yarn.lock" }}
+          paths:
+            - node_modules
+            - web/node_modules
       - run:
           command: yarn web-test-ci
           environment:
