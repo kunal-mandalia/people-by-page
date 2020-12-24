@@ -1,7 +1,8 @@
-import { makeStyles, Typography } from '@material-ui/core'
+import { IconButton, makeStyles, Tooltip, Typography } from '@material-ui/core'
 import React from 'react'
 import { useHistory } from 'react-router-dom'
 import { books } from '../books/books'
+import GitHubIcon from '@material-ui/icons/GitHub'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -10,8 +11,8 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.grey[900],
   },
   title: {
-    fontWeight: 800,
-    color: theme.palette.grey[600],
+    fontWeight: 100,
+    color: theme.palette.grey[500],
   },
   book: {
     padding: theme.spacing(2),
@@ -43,12 +44,18 @@ const useStyles = makeStyles((theme) => ({
 export function Home() {
   const classes = useStyles()
   const history = useHistory()
+  const goToRepo = () => {
+    window.open('https://github.com/kunal-mandalia/people-by-page', '_blank')
+  }
   return (
     <div className={classes.root}>
-      <Typography variant="h6" classes={{ root: classes.title }}>
-        <span>
-          People by <span>📓</span> Page
-        </span>
+      <Tooltip title="See project on GitHub" placement="right">
+        <IconButton onClick={goToRepo} color="primary">
+          <GitHubIcon />
+        </IconButton>
+      </Tooltip>
+      <Typography variant="subtitle1" classes={{ root: classes.title }}>
+        <span>People by Page</span>
       </Typography>
       <br />
       <br />
