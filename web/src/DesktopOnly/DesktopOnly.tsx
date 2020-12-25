@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import Alert from '@material-ui/lab/Alert'
-import { Collapse, Hidden, makeStyles } from '@material-ui/core'
+import { Hidden, makeStyles } from '@material-ui/core'
 
 const useStyles = makeStyles((theme) => ({
   root: {
