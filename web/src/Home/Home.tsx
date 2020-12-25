@@ -3,6 +3,7 @@ import React from 'react'
 import { useHistory } from 'react-router-dom'
 import { books } from '../books/books'
 import GitHubIcon from '@material-ui/icons/GitHub'
+import { DesktopOnly } from '../DesktopOnly/DesktopOnly'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -49,6 +50,7 @@ export function Home() {
   }
   return (
     <div className={classes.root}>
+      <DesktopOnly />
       <Tooltip title="See project on GitHub" placement="right">
         <IconButton onClick={goToRepo} color="primary">
           <GitHubIcon />
