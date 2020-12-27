@@ -7,189 +7,206 @@ export const book_9780140449242: Book = {
   pages: {
     start: 15,
     total: 985,
-    read: 30,
+    read: 50,
   },
   peopleByPage: {
-    0: {
-      id: 0,
+    900: {
+      id: 900,
+      name: 'Pyotr Fomich Kalganov',
+      page: 50,
+      relations: [
+        {
+          to: 1000,
+          type: 'direct',
+          page: 50,
+        },
+      ],
+    },
+    1000: {
+      id: 1000,
       name: 'Pyotr Aleksandrovich Miusov',
       page: 19,
       relations: [
         {
-          to: 1,
+          to: 1100,
           type: 'direct',
           page: 19,
         },
+        {
+          to: 900,
+          type: 'direct',
+          page: 50,
+        },
       ],
     },
-    1: {
-      id: 1,
+    1100: {
+      id: 1100,
       name: 'Adelaida Ivanovna Miusova',
       page: 16,
       relations: [
         {
-          to: 2,
+          to: 1200,
           type: 'partner',
           page: 16,
         },
         {
-          to: 3,
+          to: 1300,
           type: 'parent',
           page: 16,
         },
         {
-          to: 0,
+          to: 1000,
           type: 'direct',
           page: 22,
         },
       ],
     },
-    2: {
-      id: 2,
+    1200: {
+      id: 1200,
       name: 'Fyodor Pavlovich Karamazov',
       page: 15,
       relations: [
         {
-          to: 1,
+          to: 1100,
           type: 'partner',
           page: 16,
         },
         {
-          to: 4,
+          to: 1400,
           type: 'partner',
           page: 22,
         },
         {
-          to: 3,
+          to: 1300,
           type: 'parent',
           page: 15,
         },
         {
-          to: 5,
+          to: 1500,
           type: 'parent',
           page: 15,
         },
         {
-          to: 6,
+          to: 1600,
           type: 'parent',
           page: 15,
         },
       ],
     },
-    3: {
-      id: 3,
+    1300: {
+      id: 1300,
       name: 'Dmitry Fyodorovich Karamazov',
       page: 15,
       relations: [
         {
-          to: 1,
+          to: 1100,
           type: 'child',
           page: 16,
         },
         {
-          to: 2,
+          to: 1200,
           type: 'child',
           page: 15,
         },
       ],
     },
-    4: {
-      id: 4,
+    1400: {
+      id: 1400,
       name: 'Sofya Ivanovna',
       page: 22,
       relations: [
         {
-          to: 2,
+          to: 1200,
           type: 'partner',
           page: 22,
         },
         {
-          to: 5,
+          to: 1500,
           type: 'parent',
           page: 22,
         },
         {
-          to: 6,
+          to: 1600,
           type: 'parent',
           page: 22,
         },
         {
-          to: 8,
+          to: 1800,
           type: 'child',
           page: 22,
         },
       ],
     },
-    5: {
-      id: 5,
+    1500: {
+      id: 1500,
       name: 'Ivan Karamazov',
       page: 15,
       relations: [
         {
-          to: 2,
+          to: 1200,
           type: 'child',
           page: 15,
         },
         {
-          to: 4,
+          to: 1400,
           type: 'child',
           page: 22,
         },
         {
-          to: 6,
+          to: 1600,
           type: 'sibling',
           page: 15,
         },
       ],
     },
-    6: {
-      id: 6,
+    1600: {
+      id: 1600,
       name: 'Alexei Karamazov',
       page: 15,
       relations: [
         {
-          to: 2,
+          to: 1200,
           type: 'child',
           page: 15,
         },
         {
-          to: 4,
+          to: 1400,
           type: 'child',
           page: 22,
         },
         {
-          to: 5,
+          to: 1500,
           type: 'sibling',
           page: 15,
         },
       ],
     },
-    7: {
-      id: 7,
+    1700: {
+      id: 1700,
       name: 'Grigory',
       page: 19,
       relations: [],
     },
-    8: {
-      id: 8,
+    1800: {
+      id: 1800,
       name: 'Widow of General Vorokhov',
       page: 22,
       relations: [
         {
-          to: 4,
+          to: 1400,
           type: 'parent',
           page: 22,
         },
       ],
     },
-    9: {
-      id: 9,
+    1900: {
+      id: 1900,
       name: 'Yefim Petrovich Polyonov',
       page: 25,
       relations: [],
     },
-    10: {
-      id: 10,
+    2000: {
+      id: 2000,
       name: 'Father Zosima',
       page: 30,
       relations: [],
