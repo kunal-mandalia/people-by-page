@@ -55,7 +55,10 @@ export function peopleTreeToChartDimensions(
   if (ids.length === 0) return dimensions
 
   const getIsRoot = (id: number) => {
-    return peopleTree[id]!.relations.length === 0
+    return (
+      peopleTree[id]!.relations.length === 0 ||
+      peopleTree[id]!.relations.every((r) => r.type === 'parent')
+    )
   }
 
   queue.push({ id: Number(ids[0]), level: 0, root: getIsRoot(ids[0]) })
@@ -432,6 +435,21 @@ export function CharacterGraph({ peopleTree, page, startPage }: Props) {
             p1.relations.some((r1) => r1.to === r2.to && r1.type === 'parent')
         )
 
+        const parentToParentLine = (
+          <line
+            key={`parentToParentLine:${p.to}:${p1D.id}:${p2D.id}`}
+            x1={p1D.column + pan.difference.x}
+            y1={p1D.row + pan.difference.y}
+            x2={p2D.column + pan.difference.x}
+            y2={p2D.row + pan.difference.y}
+            stroke={colors[0]}
+            strokeWidth="8px"
+          />
+        )
+        if (p1p2Children.length === 0) {
+          return [parentToParentLine]
+        }
+
         const p1p2ChildrenDimensions = p1p2Children
           .map((r) => r.to)
           .map((id) => dimensions.find((d) => d.id === id))
@@ -463,17 +481,7 @@ export function CharacterGraph({ peopleTree, page, startPage }: Props) {
             strokeWidth="4px"
           />
         )
-        const parentToParentLine = (
-          <line
-            key={`parentToParentLine:${p.to}:${p1D.id}:${p2D.id}`}
-            x1={p1D.column + pan.difference.x}
-            y1={p1D.row + pan.difference.y}
-            x2={p2D.column + pan.difference.x}
-            y2={p2D.row + pan.difference.y}
-            stroke={colors[0]}
-            strokeWidth="8px"
-          />
-        )
+
         const parentToMidSiblingLine = (
           <line
             key={`parentToMidSiblingLine:${p.to}:${siblingMidpointCol}`}
