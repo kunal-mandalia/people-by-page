@@ -1,4 +1,4 @@
-import React, { Fragment, TouchEventHandler, useState } from 'react'
+import React, { Fragment, useState } from 'react'
 import { colors, firstNLetters } from '../util'
 import { PeopleSVGDimensions, PeopleTree } from '../types'
 import Tooltip from '@material-ui/core/Tooltip'
