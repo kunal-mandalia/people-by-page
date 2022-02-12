@@ -558,6 +558,7 @@ export function CharacterGraph({ peopleTree, page, startPage }: Props) {
         width="100vw"
         height="calc(100vh - 260px)"
         xmlns="http://www.w3.org/2000/svg"
+        style={{ touchAction: 'none' }}
       >
         <rect
           width="100%"
