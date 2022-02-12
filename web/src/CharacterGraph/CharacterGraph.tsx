@@ -298,6 +298,36 @@ export function CharacterGraph({ peopleTree, page, startPage }: Props) {
     })
   }
 
+  const handleTouchMove = (event: React.TouchEvent<SVGRectElement>) => {
+    if (pan.dragging) {
+      setPan({
+        ...pan,
+        difference: {
+          x: event.targetTouches[0].clientX - pan.initial.x,
+          y: event.targetTouches[0].clientY - pan.initial.y,
+        },
+      })
+    }
+  }
+
+  const handleTouchStart = (event: React.TouchEvent<SVGRectElement>) => {
+    setPan({
+      ...pan,
+      dragging: true,
+      initial: {
+        x: event.targetTouches[0].clientX - pan.difference.x,
+        y: event.targetTouches[0].clientY - pan.difference.y,
+      },
+    })
+  }
+
+  const handleTouchEnd = () => {
+    setPan({
+      ...pan,
+      dragging: false,
+    })
+  }
+
   const handleMouseUp = () => {
     setPan({
       ...pan,
@@ -536,6 +566,9 @@ export function CharacterGraph({ peopleTree, page, startPage }: Props) {
           onMouseDown={handleMouseDown}
           onMouseUp={handleMouseUp}
           onMouseMove={handleMouseMove}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
           className={pan.dragging ? classes.grabbing : classes.grab}
         />
         {/* Zoom */}
